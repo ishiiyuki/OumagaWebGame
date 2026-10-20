@@ -17,6 +17,87 @@
   <!-- 背景の和柄オーバーレイとヴィネット -->
   <div class="bg-overlay" aria-hidden="true"></div>
 
+  <!-- ================= 1. タイトル画面オーバーレイ ================= -->
+  <section id="title-screen" class="screen-overlay">
+    <div class="title-screen-card">
+      <div class="title-screen-watermark" aria-hidden="true">逢曲時</div>
+      <div class="title-vertical-deco" aria-hidden="true">現世と常世の狭間にて――</div>
+
+      <div class="title-emblem-wrap">
+        <span class="title-kicker">彼岸旅館 お座敷おもてなしカードゲーム</span>
+        <div class="title-main-row">
+          <div class="title-large-seal">逢曲時</div>
+          <h1 class="title-main-logo">逢曲時 帳場録<span class="title-reading">― おうまがどき ちょうばろく ―</span></h1>
+        </div>
+      </div>
+
+      <p class="title-catchphrase">
+        宵闇に行灯が灯る頃、今宵もお座敷へ風流な客人たちがやって来る。<br>
+        粋な<strong>【話術】</strong>、華やかな<strong>【舞踊】</strong>、賑やかな<strong>【座興】</strong>で五夜の宴を彩りましょう。
+      </p>
+
+      <div class="title-actions">
+        <button id="btn-title-start" class="btn-primary btn-title-large" type="button">
+          🏮 暖簾をくぐる（遊び方へ）
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 2. ゲーム開始前の遊び方説明画面 ================= -->
+  <section id="intro-screen" class="screen-overlay hidden" role="dialog" aria-modal="true" aria-label="遊び方説明">
+    <div class="intro-screen-card">
+      <div class="modal-watermark" aria-hidden="true">心得</div>
+      <p class="modal-subtitle">― 開帳前の手引書 ―</p>
+      <h2 class="modal-title">彼岸旅館『逢曲時』お座敷の心得</h2>
+
+      <div class="intro-grid">
+        <div class="intro-step-box">
+          <div class="intro-step-num">壱</div>
+          <h3>宿の「評判」と「雅」を守る</h3>
+          <p>
+            旅館には<strong>「🏮 評判（初期3）」</strong>と<strong>「🪭 雅（初期4）」</strong>の2つのステータスがあります。<br>
+            どちらか1つでも <strong>0</strong> になると帳場閉鎖（ゲームオーバー）。<strong>全五夜</strong>を乗り切ればクリアです！
+          </p>
+        </div>
+
+        <div class="intro-step-box">
+          <div class="intro-step-num">弐</div>
+          <h3>3つのお座敷と客人の所望</h3>
+          <p>
+            毎夜「大広間・舞台」「離れの小座敷」「月見の宴席」に客人が訪れます。<br>
+            客人が求める<strong>💬【話術】・🪭【舞踊】・🍶【座興】</strong>の数値（後半は2つ同時の複合要求も出現）を確認しましょう。
+          </p>
+        </div>
+
+        <div class="intro-step-box">
+          <div class="intro-step-num">参</div>
+          <h3>山札ドローと「帳場の呼び鈴」</h3>
+          <p>
+            全8名のキャスト山札から毎夜<strong>4名</strong>が手札に配られます。<br>
+            手札が客人の要求と合わない時は、1夜に1回だけ<strong>「🔔 呼び鈴（雅-1）」</strong>で未配置の手札を引き直せます。
+          </p>
+        </div>
+
+        <div class="intro-step-box">
+          <div class="intro-step-num">肆</div>
+          <h3>お座敷ボーナスと筆頭・常世</h3>
+          <p>
+            各お座敷には得意属性<strong>+1</strong>（相性キャストなら<strong>+2</strong>、帳場頭・にゃるなら<strong>+3</strong>）のボーナスがあります。<br>
+            また<strong>「筆頭・常世」</strong>は全能力4の最強枠ですが、配置時に<strong>「雅」を1消費</strong>する特別な切り札です。
+          </p>
+        </div>
+      </div>
+
+      <div class="intro-actions">
+        <button id="btn-intro-back" class="btn-secondary" type="button">◂ タイトルへ戻る</button>
+        <button id="btn-intro-play" class="btn-primary btn-title-large" type="button">
+          🕯️ 帳場を開く（第一夜を開始）
+        </button>
+      </div>
+    </div>
+  </section>
+
   <!-- メインゲームコンテナ -->
   <div class="app-container">
     

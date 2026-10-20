@@ -68,7 +68,13 @@
     cutinVisitorSpeaker: document.getElementById("cutin-visitor-speaker"),
     cutinVisitorLine: document.getElementById("cutin-visitor-line"),
     cutinNarration: document.getElementById("cutin-narration"),
-    btnCutinNext: document.getElementById("btn-cutin-next")
+    btnCutinNext: document.getElementById("btn-cutin-next"),
+    // タイトル画面＆開帳前遊び方画面用DOM
+    titleScreen: document.getElementById("title-screen"),
+    introScreen: document.getElementById("intro-screen"),
+    btnTitleStart: document.getElementById("btn-title-start"),
+    btnIntroBack: document.getElementById("btn-intro-back"),
+    btnIntroPlay: document.getElementById("btn-intro-play")
   };
 
   /* ==========================================================================
@@ -821,11 +827,19 @@
             ? `外す（雅+${assignedCast.deploySpiritCost}返却）`
             : "外す";
 
+        const safeAssignedImg = (assignedCast.imagePath || "").trim();
+        const miniSealImgHTML = safeAssignedImg
+          ? `<img src="${escapeHtml(safeAssignedImg)}" alt="" class="card-real-img" onerror="this.remove()">`
+          : "";
+
         slotInnerHTML = `
           <div class="assigned-cast-view">
             <div class="assigned-cast-top">
               <div class="assigned-cast-identity">
-                <div class="mini-seal" style="background:${assignedCast.accentColor}">${escapeHtml(assignedCast.kanjiWatermark)}</div>
+                <div class="mini-seal" style="background:${assignedCast.accentColor}">
+                  ${miniSealImgHTML}
+                  <span>${escapeHtml(assignedCast.kanjiWatermark)}</span>
+                </div>
                 <div>
                   <div class="assigned-cast-name">${escapeHtml(assignedCast.fullName)}</div>
                 </div>
@@ -1397,6 +1411,29 @@
     }
   });
 
+  // タイトル画面 → 遊び方説明画面 → ゲーム本編開始の画面遷移
+  if (dom.btnTitleStart) {
+    dom.btnTitleStart.addEventListener("click", () => {
+      dom.titleScreen.classList.add("hidden");
+      dom.introScreen.classList.remove("hidden");
+    });
+  }
+
+  if (dom.btnIntroBack) {
+    dom.btnIntroBack.addEventListener("click", () => {
+      dom.introScreen.classList.add("hidden");
+      dom.titleScreen.classList.remove("hidden");
+    });
+  }
+
+  if (dom.btnIntroPlay) {
+    dom.btnIntroPlay.addEventListener("click", () => {
+      dom.introScreen.classList.add("hidden");
+      initGame();
+    });
+  }
+
   initBackgroundParticles();
+  // 背景のゲーム盤面も初期描画しておき、遊び方画面から「帳場を開く」で新規ゲームを開始する
   initGame();
 })();

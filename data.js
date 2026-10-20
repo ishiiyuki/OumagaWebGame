@@ -95,6 +95,7 @@ window.GAME_DATA = {
   ],
 
   // キャスト（山札：全8名）
+  // `image/` フォルダ内の画像ファイル名に対応（存在しないファイルは自動的にCSSプレースホルダーにフォールバックします）
   casts: [
     // 1. 筆頭・常世（SSR特別枠・配置時に雅コスト1）
     {
@@ -103,7 +104,7 @@ window.GAME_DATA = {
       title: "筆頭",
       fullName: "筆頭・常世",
       kanjiWatermark: "常",
-      imagePath: "", // 例: "assets/cast_tokoyo.png"
+      imagePath: "image/tokoyo.png",
       accentColor: "#e6b422",
       isSpecialSSR: true,
       deploySpiritCost: 1, // 配置時に「雅」を1消費（解除時に+1返却）
@@ -125,7 +126,7 @@ window.GAME_DATA = {
       title: "舞姫",
       fullName: "舞姫・ハルカ",
       kanjiWatermark: "扇",
-      imagePath: "", // 例: "assets/cast_haruka.png"
+      imagePath: "image/haruka.png",
       accentColor: "#d63864",
       stats: {
         talk: 1,
@@ -145,7 +146,7 @@ window.GAME_DATA = {
       title: "粋人",
       fullName: "粋人・ならく",
       kanjiWatermark: "粋",
-      imagePath: "", // 例: "assets/cast_naraku.png"
+      imagePath: "image/naraku.png",
       accentColor: "#d4942a",
       stats: {
         talk: 2,
@@ -165,7 +166,7 @@ window.GAME_DATA = {
       title: "見習い",
       fullName: "見習い・まりん",
       kanjiWatermark: "純",
-      imagePath: "", // 例: "assets/cast_marin.png"
+      imagePath: "image/marin.png",
       accentColor: "#3b7a9e",
       stats: {
         talk: 4,
@@ -185,7 +186,7 @@ window.GAME_DATA = {
       title: "看板娘",
       fullName: "看板娘・月下香",
       kanjiWatermark: "香",
-      imagePath: "", // 例: "assets/cast_gekkakou.png"
+      imagePath: "image/gekkakou.png",
       accentColor: "#e06d9f",
       stats: {
         talk: 3,
@@ -206,7 +207,7 @@ window.GAME_DATA = {
       title: "姉御肌",
       fullName: "姉御肌・たまも",
       kanjiWatermark: "姉",
-      imagePath: "", // 例: "assets/cast_tamamo.png"
+      imagePath: "image/tamamo.png",
       accentColor: "#b85d19",
       stats: {
         talk: 3,
@@ -227,7 +228,7 @@ window.GAME_DATA = {
       title: "歌姫",
       fullName: "歌姫・るちゃ",
       kanjiWatermark: "唄",
-      imagePath: "", // 例: "assets/cast_rucha.png"
+      imagePath: "image/rucha.png",
       accentColor: "#9b59b6",
       stats: {
         talk: 1,
@@ -248,7 +249,7 @@ window.GAME_DATA = {
       title: "帳場頭",
       fullName: "帳場頭・にゃる",
       kanjiWatermark: "統",
-      imagePath: "", // 例: "assets/cast_nyaru.png"
+      imagePath: "image/nyaru.png",
       accentColor: "#c92a2a",
       stats: {
         talk: 2,
