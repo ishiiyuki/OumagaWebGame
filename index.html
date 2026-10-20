@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261021_2">
 </head>
 <body>
   <!-- 共通SVGシンボル定義：女将・常世の家紋「八つ槌車（やつづちぐるま）」 -->
@@ -74,7 +74,7 @@
 
       <div class="title-emblem-wrap">
         <div class="title-kamon-crest" title="女将・常世の家紋『八つ槌車』">
-          <svg class="kamon-svg"><use href="#kamon-yatsuduchiguruma"></use></svg>
+          <svg class="kamon-svg" width="64" height="64"><use href="#kamon-yatsuduchiguruma"></use></svg>
         </div>
         <span class="title-kicker">彼岸旅館「逢曲時」おうまがとき ― 神楽おもてなしカードゲーム</span>
         <div class="title-main-row">
@@ -162,7 +162,7 @@
     <header class="top-bar">
       <div class="title-block">
         <div class="header-kamon" title="女将・常世の家紋『八つ槌車』">
-          <svg class="kamon-svg"><use href="#kamon-yatsuduchiguruma"></use></svg>
+          <svg class="kamon-svg" width="28" height="28"><use href="#kamon-yatsuduchiguruma"></use></svg>
         </div>
         <div class="title-text">
           <h1>逢曲時 帳場録</h1>
@@ -170,6 +170,12 @@
         <div class="night-indicator">
           <span id="night-count" class="night-value">第一夜</span>
           <span id="night-total" class="night-total">/ 全五夜</span>
+        </div>
+        <!-- 旧キャッシュJS互換用の非表示要素 -->
+        <div style="display:none;" aria-hidden="true">
+          <span id="phase-dusk"></span>
+          <span id="phase-oumaga"></span>
+          <span id="phase-midnight"></span>
         </div>
       </div>
 
@@ -268,6 +274,7 @@
           </div>
           <p id="cutin-narration" class="cutin-narration"></p>
         </div>
+        <div id="cutin-visitor-box" style="display:none;" aria-hidden="true"></div>
       </div>
 
       <div class="cutin-footer">
@@ -315,7 +322,7 @@
     </div>
   </div>
 
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script src="data.js?v=20261021_2"></script>
+  <script src="app.js?v=20261021_2"></script>
 </body>
 </html>
