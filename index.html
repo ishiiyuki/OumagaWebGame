@@ -158,33 +158,18 @@
   <!-- メインゲームコンテナ -->
   <div class="app-container">
     
-    <!-- ================= 上部：ステータス＆帳場録（ログ）エリア ================= -->
+    <!-- ================= 上部：コンパクトステータス＆ナビバー ================= -->
     <header class="top-bar">
-      <!-- 旅館タイトル（八つ槌車家紋＋縦書き朱印＋タイトル） -->
       <div class="title-block">
         <div class="header-kamon" title="女将・常世の家紋『八つ槌車』">
           <svg class="kamon-svg"><use href="#kamon-yatsuduchiguruma"></use></svg>
         </div>
-        <div class="title-seal">逢曲時</div>
         <div class="title-text">
-          <span class="subtitle">現世と常世の狭間・死者の店</span>
           <h1>逢曲時 帳場録</h1>
         </div>
-      </div>
-
-      <!-- 夜の進行・フェーズ表示 -->
-      <div class="phase-panel">
         <div class="night-indicator">
-          <span class="night-label">現在の刻</span>
           <span id="night-count" class="night-value">第一夜</span>
           <span id="night-total" class="night-total">/ 全五夜</span>
-        </div>
-        <div class="phase-steps">
-          <span id="phase-dusk" class="phase-step">一、宵の口</span>
-          <span class="phase-arrow">▸</span>
-          <span id="phase-oumaga" class="phase-step active">二、逢曲時</span>
-          <span class="phase-arrow">▸</span>
-          <span id="phase-midnight" class="phase-step">三、黄泉平坂</span>
         </div>
       </div>
 
@@ -209,27 +194,18 @@
         </div>
       </div>
 
-      <!-- 帳場録（イベントログ） -->
+      <!-- 帳場録（1行通知ログ）＆サブボタン -->
       <div class="log-panel">
-        <div class="log-header">
-          <span>📜 帳場録</span>
-          <div class="log-header-btns">
-            <a id="btn-world" class="btn-sub" href="https://oumagatoki.pages.dev/#top" target="_blank" rel="noopener noreferrer" title="逢曲時の公式サイトを開く">世界観</a>
-            <button id="btn-help" class="btn-sub" type="button" title="遊び方を確認">手引書</button>
-          </div>
-        </div>
         <div id="game-log" class="log-entries" role="log" aria-live="polite"></div>
+        <div class="log-header-btns">
+          <a id="btn-world" class="btn-sub" href="https://oumagatoki.pages.dev/#top" target="_blank" rel="noopener noreferrer" title="逢曲時の公式サイトを開く">世界観</a>
+          <button id="btn-help" class="btn-sub" type="button" title="遊び方を確認">手引書</button>
+        </div>
       </div>
     </header>
 
     <!-- ================= 中央：客室エリア（3部屋） ================= -->
     <main class="rooms-section">
-      <div class="section-heading">
-        <span class="heading-line"></span>
-        <h2>お座敷一覧 <small>― 現世から迷い込んだ客人の魂を神楽（話術・舞踊・座興）で鎮め、“黄泉平坂”より現世へ送り還せ ―</small></h2>
-        <span class="heading-line"></span>
-      </div>
-
       <div id="rooms-grid" class="rooms-grid">
         <!-- JSで3部屋を動的生成 -->
       </div>
@@ -239,10 +215,10 @@
     <footer class="hand-section">
       <div class="hand-header">
         <div class="hand-title-group">
-          <h3>帳場待機 誘魅巫女（いざなみのみこ）（手札 4枚）</h3>
+          <h3>待機中の誘魅（いざなみ）</h3>
           <span id="deck-status-badge" class="deck-status-badge">山札控え：4名</span>
           <span id="selection-hint" class="selection-hint">
-            誘魅カードを客室へドラッグ＆ドロップ、またはクリックで選択してお座敷へ配置してください（最大3名）
+            誘魅をお座敷へドラッグ＆ドロップ、またはクリックで配置
           </span>
         </div>
         <div class="action-buttons">
@@ -275,7 +251,7 @@
         <span id="cutin-reward-badge" class="cutin-reward-badge">評判+1</span>
       </div>
 
-      <!-- 会話メイン領域（左：誘魅 / 中央：2〜3行の掛け合い / 右：迷い人） -->
+      <!-- 会話メイン領域（左：大型誘魅ポートレート / 右：掛け合い） -->
       <div class="cutin-stage">
         <div id="cutin-cast-box" class="cutin-actor cutin-actor-cast">
           <!-- JSで誘魅立ち絵またはプレースホルダーを挿入 -->
@@ -291,10 +267,6 @@
             <p id="cutin-visitor-line" class="cutin-line"></p>
           </div>
           <p id="cutin-narration" class="cutin-narration"></p>
-        </div>
-
-        <div id="cutin-visitor-box" class="cutin-actor cutin-actor-visitor">
-          <!-- JSで来訪者プレースホルダーまたはimgを挿入 -->
         </div>
       </div>
 

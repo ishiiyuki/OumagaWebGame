@@ -121,103 +121,72 @@ html, body {
 .app-container {
   position: relative;
   z-index: 2;
-  max-width: 1360px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 12px 20px 18px;
+  padding: 8px 18px 12px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
 }
 
 /* ==========================================================================
-   上部：ステータス＆帳場録エリア
+   上部：コンパクトステータス＆ナビバー
    ========================================================================== */
 .top-bar {
   display: grid;
-  grid-template-columns: auto 255px 270px 1fr;
+  grid-template-columns: auto auto 1fr;
   gap: 14px;
-  align-items: stretch;
+  align-items: center;
   background: linear-gradient(180deg, rgba(22, 19, 26, 0.96), rgba(10, 10, 14, 0.96));
   border: var(--border-gold);
   border-top: 2px solid var(--c-amber);
   border-radius: 6px;
-  padding: 10px 16px;
+  padding: 6px 14px;
   box-shadow: var(--shadow-card);
 }
 
-/* タイトルブロック（八つ槌車＋朱印＋タイトル） */
+/* タイトルブロック（八つ槌車＋タイトル＋現在の夜） */
 .title-block {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-right: 12px;
+  padding-right: 14px;
   border-right: 1px solid rgba(212, 175, 55, 0.25);
 }
 
 .header-kamon {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   color: var(--c-amber);
   filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.45));
   flex-shrink: 0;
 }
 
-.title-seal {
-  writing-mode: vertical-rl;
-  background: linear-gradient(180deg, #b81d24, #6e0b10);
-  color: var(--c-washi);
-  font-weight: 800;
-  font-size: 0.92rem;
-  letter-spacing: 0.15em;
-  padding: 6px 5px;
-  border: 1px solid rgba(212, 175, 55, 0.7);
-  border-radius: 3px;
-  box-shadow: 0 0 12px var(--c-crimson-glow);
-}
-
-.title-text .subtitle {
-  display: block;
-  font-size: 0.7rem;
-  color: var(--c-amber);
-  letter-spacing: 0.14em;
-}
-
 .title-text h1 {
-  font-size: 1.32rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--c-washi);
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
   white-space: nowrap;
 }
 
-/* 夜の進行・フェーズ表示 */
-.phase-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background: rgba(8, 8, 12, 0.65);
-  border: 1px solid rgba(212, 175, 55, 0.22);
-  border-radius: 4px;
-}
-
 .night-indicator {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-}
-
-.night-label {
-  font-size: 0.74rem;
-  color: #b8b09c;
+  gap: 5px;
+  background: rgba(212, 175, 55, 0.14);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 4px;
+  padding: 4px 12px;
+  margin-left: 4px;
+  white-space: nowrap;
 }
 
 .night-value {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--c-amber);
   text-shadow: 0 0 8px rgba(212, 175, 55, 0.45);
@@ -225,44 +194,15 @@ html, body {
 
 .night-total {
   font-size: 0.8rem;
-  color: #9e9583;
+  color: #cfc6b2;
 }
 
-.phase-steps {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.73rem;
-}
-
-.phase-step {
-  padding: 2px 6px;
-  border-radius: 3px;
-  color: #888276;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.phase-step.active {
-  background: rgba(139, 0, 0, 0.45);
-  color: var(--c-amber-light);
-  border: 1px solid var(--c-crimson);
-  font-weight: 700;
-  box-shadow: 0 0 8px rgba(201, 42, 42, 0.45);
-}
-
-.phase-arrow {
-  color: #5c564b;
-  font-size: 0.68rem;
-}
-
-/* 旅館ステータス（評判・雅） */
+/* 旅館ステータス（評判・雅を横並び表示） */
 .status-panel {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  padding: 4px 12px;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 14px;
   background: rgba(8, 8, 12, 0.65);
   border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 4px;
@@ -271,15 +211,13 @@ html, body {
 .status-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 
 .status-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  min-width: 95px;
+  gap: 4px;
 }
 
 .status-icon {
@@ -289,26 +227,26 @@ html, body {
 .status-name {
   font-size: 0.85rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
 
 .status-num {
   font-size: 1.05rem;
   font-weight: 800;
   color: var(--c-amber);
-  margin-left: auto;
+  margin-left: 2px;
 }
 
 .token-row {
   display: flex;
-  gap: 5px;
-  flex: 1;
-  justify-content: flex-end;
+  gap: 4px;
+  align-items: center;
 }
 
 .token-pip {
-  width: 17px;
-  height: 17px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   border: 1px solid rgba(212, 175, 55, 0.45);
   background: rgba(255, 255, 255, 0.04);
@@ -344,31 +282,24 @@ html, body {
   75% { transform: translateX(4px); color: var(--c-crimson); }
 }
 
-/* 帳場録（ログ）パネル */
+/* 帳場録（状況説明ログ）＆サブボタン */
 .log-panel {
   display: flex;
-  flex-direction: column;
-  background: rgba(8, 8, 12, 0.82);
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  border-radius: 4px;
-  padding: 6px 10px;
-  max-height: 82px;
-}
-
-.log-header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 0.75rem;
-  color: var(--c-amber);
-  margin-bottom: 3px;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
-  padding-bottom: 2px;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(8, 8, 12, 0.86);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 4px;
+  padding: 7px 12px;
+  min-width: 0;
+  min-height: 54px;
 }
 
 .log-header-btns {
   display: flex;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .btn-sub {
@@ -380,11 +311,13 @@ html, body {
   color: var(--c-amber-light);
   border: 1px solid rgba(212, 175, 55, 0.48);
   border-radius: 3px;
-  padding: 1px 8px;
+  padding: 4px 10px;
   font-family: var(--font-serif);
-  font-size: 0.72rem;
+  font-size: 0.76rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-sub:hover {
@@ -393,18 +326,26 @@ html, body {
 }
 
 .log-entries {
+  flex: 1;
+  min-width: 0;
+  max-height: 54px;
   overflow-y: auto;
-  font-size: 0.77rem;
-  line-height: 1.45;
-  color: #e4decb;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-right: 4px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #ece5d3;
+  display: block;
+  padding-right: 6px;
 }
 
 .log-entry {
+  white-space: normal;
+  word-break: break-word;
+  margin-bottom: 3px;
   animation: fadeIn 0.3s ease;
+}
+
+.log-entry:last-child {
+  margin-bottom: 0;
 }
 
 .log-entry.log-success {
@@ -421,42 +362,12 @@ html, body {
 .rooms-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
-}
-
-.section-heading {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: center;
-}
-
-.section-heading h2 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--c-amber);
-  letter-spacing: 0.12em;
-}
-
-.section-heading h2 small {
-  font-size: 0.78rem;
-  color: #cfc6b2;
-  font-weight: 400;
-  margin-left: 8px;
-}
-
-.heading-line {
-  flex: 1;
-  max-width: 180px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.55), transparent);
 }
 
 .rooms-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 14px;
   align-items: stretch;
 }
 
@@ -467,10 +378,10 @@ html, body {
   border: 1px solid rgba(212, 175, 55, 0.38);
   border-top: 2px solid rgba(212, 175, 55, 0.65);
   border-radius: 6px;
-  padding: 12px 14px;
+  padding: 8px 12px 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 7px;
   box-shadow: var(--shadow-card);
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   overflow: hidden;
@@ -478,11 +389,11 @@ html, body {
 
 .room-watermark {
   position: absolute;
-  top: -12px;
+  top: -10px;
   right: 8px;
-  font-size: 5.5rem;
+  font-size: 4.5rem;
   font-weight: 800;
-  color: rgba(212, 175, 55, 0.045);
+  color: rgba(212, 175, 55, 0.04);
   pointer-events: none;
   user-select: none;
   line-height: 1;
@@ -500,68 +411,44 @@ html, body {
   border-color: rgba(212, 175, 55, 0.78);
 }
 
-/* 客室ヘッダー */
+/* 客室ヘッダー（1行コンパクト） */
 .room-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
-  padding-bottom: 6px;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+  padding-bottom: 5px;
   position: relative;
   z-index: 1;
 }
 
-.room-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.room-wooden-tag {
-  writing-mode: vertical-rl;
-  background: linear-gradient(180deg, #42261d, #21120d);
-  color: var(--c-amber-light);
-  border: 1px solid var(--c-amber);
-  padding: 5px 4px;
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  border-radius: 2px;
-  box-shadow: inset 0 0 4px rgba(0,0,0,0.7);
-}
-
 .room-name {
-  font-size: 1.12rem;
+  font-size: 1rem;
   font-weight: 800;
   color: var(--c-washi);
-  letter-spacing: 0.08em;
-}
-
-.room-reading {
-  display: block;
-  font-size: 0.68rem;
-  color: #b0a692;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
 
 .room-bonus-badge {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 3px;
   background: rgba(212, 175, 55, 0.14);
   border: 1px solid rgba(212, 175, 55, 0.45);
   color: var(--c-amber-light);
-  text-align: right;
+  white-space: nowrap;
 }
 
 .room-affinity-sub {
-  display: block;
   font-size: 0.64rem;
   color: #d6ccb8;
   font-weight: 400;
 }
 
-/* 来訪者・迷い人カード（古和紙×彼岸花深紅縁） */
+/* 来訪者・迷い人カード（スリム2段構成） */
 .visitor-card {
   position: relative;
   background:
@@ -569,21 +456,18 @@ html, body {
     linear-gradient(135deg, #f3ebd3 0%, #ded0ae 100%);
   color: var(--c-ink);
   border: 1px solid #b5a482;
-  border-left: 5px solid var(--c-crimson-deep);
+  border-left: 4px solid var(--c-crimson-deep);
   border-radius: 4px;
-  padding: 10px 12px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
-  display: flex;
-  gap: 10px;
-  align-items: stretch;
+  padding: 7px 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  animation: cardDeal 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: cardDeal 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes cardDeal {
   0% {
     opacity: 0;
-    transform: translateY(-14px) scale(0.96);
+    transform: translateY(-10px) scale(0.97);
   }
   100% {
     opacity: 1;
@@ -594,75 +478,17 @@ html, body {
 .visitor-watermark {
   position: absolute;
   right: 6px;
-  bottom: -10px;
-  font-size: 4.4rem;
+  bottom: -8px;
+  font-size: 3.4rem;
   font-weight: 800;
-  color: rgba(139, 0, 0, 0.08);
+  color: rgba(139, 0, 0, 0.07);
   pointer-events: none;
   line-height: 1;
 }
 
-/* プレースホルダー・サムネイル枠 */
-.card-visual-box {
-  width: 68px;
-  min-height: 82px;
-  border-radius: 3px;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-  border: 1px solid rgba(212, 175, 55, 0.45);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(160deg, #261519 0%, #0d0c12 100%);
-  color: var(--c-washi);
-}
-
-.card-visual-box img.card-real-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-}
-
-.placeholder-art {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  z-index: 1;
-  background-image: radial-gradient(rgba(212, 175, 55, 0.2) 1px, transparent 1px);
-  background-size: 8px 8px;
-}
-
-.placeholder-kanji {
-  font-size: 1.9rem;
-  font-weight: 800;
-  color: var(--c-washi);
-  text-shadow: 0 0 10px rgba(201, 42, 42, 0.85);
-  line-height: 1.1;
-}
-
-.placeholder-sub {
-  font-size: 0.6rem;
-  color: var(--c-amber-light);
-  letter-spacing: 0.06em;
-  margin-top: 2px;
-  text-align: center;
-  padding: 0 2px;
-}
-
 .visitor-info {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: 5px;
   position: relative;
   z-index: 1;
@@ -673,7 +499,7 @@ html, body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
 }
 
 .visitor-req-group {
@@ -683,17 +509,8 @@ html, body {
   flex-wrap: wrap;
 }
 
-.visitor-category {
-  font-size: 0.66rem;
-  font-weight: 700;
-  background: #241618;
-  color: var(--c-amber-light);
-  padding: 1px 6px;
-  border-radius: 2px;
-}
-
 .visitor-req-badge {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 3px;
@@ -707,33 +524,28 @@ html, body {
 .stat-bg-party { background: var(--c-party); }
 
 .visitor-name {
-  font-size: 1.01rem;
+  font-size: 0.96rem;
   font-weight: 800;
   color: var(--c-ink);
 }
 
-.visitor-desc {
-  font-size: 0.72rem;
-  color: var(--c-ink-muted);
-  line-height: 1.36;
-}
-
 .visitor-stakes {
   display: flex;
+  justify-content: space-between;
   gap: 8px;
   font-size: 0.68rem;
   font-weight: 700;
-  border-top: 1px dashed rgba(34, 30, 29, 0.25);
+  border-top: 1px dashed rgba(34, 30, 29, 0.22);
   padding-top: 4px;
 }
 
 .stake-reward { color: #1e5a8a; }
 .stake-penalty { color: #9c1414; }
 
-/* 誘魅配置スロット（各客室の下段） */
+/* 誘魅配置スロット（各客室の下段：配置した誘魅の画像も大きく表示） */
 .assignment-slot {
   position: relative;
-  min-height: 108px;
+  min-height: 98px;
   border: 2px dashed rgba(212, 175, 55, 0.35);
   border-radius: 5px;
   background: rgba(8, 8, 12, 0.72);
@@ -741,51 +553,84 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 6px 8px;
   transition: all 0.25s ease;
 }
 
 .assignment-slot.filled {
   border-style: solid;
   border-color: var(--c-amber);
-  background: linear-gradient(135deg, rgba(36, 24, 24, 0.92), rgba(14, 14, 20, 0.96));
+  background: linear-gradient(135deg, rgba(36, 24, 24, 0.94), rgba(14, 14, 20, 0.98));
 }
 
 .slot-empty-prompt {
   text-align: center;
   color: #968d7b;
-  font-size: 0.79rem;
+  font-size: 0.78rem;
   pointer-events: none;
 }
 
-.slot-empty-prompt span {
-  display: block;
-  font-size: 0.69rem;
-  color: #756c5d;
-  margin-top: 2px;
-}
-
-/* 配置済み誘魅表示 */
+/* 配置済み誘魅表示（左側：大型ポートレート / 右側：名前＋判定プレビュー） */
 .assigned-cast-view {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
   animation: ripplePlace 0.35s ease;
 }
 
 @keyframes ripplePlace {
   0% {
-    transform: scale(0.92);
+    transform: scale(0.94);
     box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
   }
   70% {
-    transform: scale(1.02);
-    box-shadow: 0 0 0 12px rgba(212, 175, 55, 0);
+    transform: scale(1.01);
+    box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
   }
   100% {
     transform: scale(1);
   }
+}
+
+.assigned-portrait {
+  width: 82px;
+  height: 90px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--c-washi);
+  border: 1.5px solid var(--c-amber);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
+}
+
+.assigned-portrait img.card-real-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  padding: 4px 4px 0;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.assigned-portrait.has-loaded-img .assigned-portrait-kanji {
+  display: none;
+}
+
+.assigned-cast-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .assigned-cast-top {
@@ -795,41 +640,13 @@ html, body {
   gap: 8px;
 }
 
-.assigned-cast-identity {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.mini-seal {
-  width: 34px;
-  height: 34px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 0.95rem;
-  color: var(--c-washi);
-  border: 1px solid rgba(212, 175, 55, 0.55);
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.mini-seal img.card-real-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-}
-
 .assigned-cast-name {
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 800;
   color: var(--c-washi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn-unassign {
@@ -837,10 +654,11 @@ html, body {
   color: #d4cbb8;
   border: 1px solid rgba(212, 175, 55, 0.35);
   border-radius: 3px;
-  padding: 2px 7px;
+  padding: 2px 8px;
   font-family: var(--font-serif);
   font-size: 0.7rem;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .btn-unassign:hover {
@@ -853,15 +671,23 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 6px;
   background: rgba(0, 0, 0, 0.55);
   border-radius: 4px;
   padding: 5px 8px;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   border: 1px solid rgba(212, 175, 55, 0.22);
 }
 
 .calc-breakdown {
   color: #dcd3be;
+  line-height: 1.35;
+}
+
+.calc-passive-hint {
+  font-size: 0.68rem;
+  color: #d4af37;
+  margin-top: 2px;
 }
 
 .calc-bonus-highlight {
@@ -871,7 +697,7 @@ html, body {
 
 .calc-verdict {
   font-weight: 800;
-  padding: 1px 6px;
+  padding: 2px 6px;
   border-radius: 3px;
   font-size: 0.72rem;
   white-space: nowrap;
@@ -963,17 +789,17 @@ html, body {
 }
 
 /* ==========================================================================
-   下部：手札（誘魅巫女待機枠）エリア
+   下部：手札（誘魅待機枠・大型ポートレートカード）エリア
    ========================================================================== */
 .hand-section {
   background: linear-gradient(180deg, rgba(20, 16, 22, 0.96), rgba(10, 10, 14, 0.99));
   border: var(--border-gold);
   border-radius: 6px;
-  padding: 10px 16px 14px;
+  padding: 8px 14px 12px;
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .hand-header {
@@ -981,25 +807,25 @@ html, body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .hand-title-group {
   display: flex;
-  align-items: baseline;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .hand-title-group h3 {
-  font-size: 1rem;
+  font-size: 0.96rem;
   font-weight: 800;
   color: var(--c-amber);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 }
 
 .deck-status-badge {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--c-amber-light);
   background: rgba(212, 175, 55, 0.15);
@@ -1009,13 +835,13 @@ html, body {
 }
 
 .selection-hint {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   color: #cfc6b2;
 }
 
 .action-buttons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
   flex-wrap: wrap;
 }
@@ -1025,11 +851,11 @@ html, body {
   color: var(--c-washi);
   border: 1px solid var(--c-amber-light);
   border-radius: 4px;
-  padding: 7px 14px;
+  padding: 6px 12px;
   font-family: var(--font-serif);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   cursor: pointer;
   box-shadow: 0 3px 10px rgba(212, 175, 55, 0.3);
   transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
@@ -1051,11 +877,11 @@ html, body {
   color: var(--c-washi);
   border: 1px solid var(--c-amber);
   border-radius: 4px;
-  padding: 8px 18px;
+  padding: 6px 16px;
   font-family: var(--font-serif);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(184, 29, 36, 0.5);
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
@@ -1081,9 +907,9 @@ html, body {
   color: var(--c-amber-light);
   border: 1px solid rgba(212, 175, 55, 0.45);
   border-radius: 4px;
-  padding: 7px 14px;
+  padding: 6px 12px;
   font-family: var(--font-serif);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -1105,18 +931,17 @@ html, body {
   gap: 14px;
 }
 
-/* 木札・漆塗り仕立ての誘魅カード */
+/* 大型キャラクター立ち絵仕立ての誘魅カード */
 .cast-card {
   position: relative;
   background:
     linear-gradient(165deg, rgba(34, 24, 28, 0.96) 0%, rgba(15, 13, 19, 0.99) 100%);
-  border: 1px solid rgba(212, 175, 55, 0.42);
+  border: 1px solid rgba(212, 175, 55, 0.45);
   border-top: 3px solid var(--c-amber);
-  border-radius: 6px;
-  padding: 10px 12px;
+  border-radius: 7px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
   cursor: grab;
   transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease;
   overflow: hidden;
@@ -1126,18 +951,22 @@ html, body {
 .cast-card:hover:not(.disabled-card) {
   transform: translateY(-6px);
   border-color: var(--c-amber-light);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.78), 0 0 14px rgba(212, 175, 55, 0.32);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.82), 0 0 16px rgba(212, 175, 55, 0.35);
+}
+
+.cast-card:hover:not(.disabled-card) .cast-portrait img.card-real-img {
+  transform: scale(1.04);
 }
 
 .cast-card.selected {
   transform: translateY(-8px);
   border-color: var(--c-crimson);
-  box-shadow: 0 0 20px rgba(201, 42, 42, 0.8);
+  box-shadow: 0 0 22px rgba(201, 42, 42, 0.85);
 }
 
 .cast-card.assigned-card {
   opacity: 0.42;
-  filter: grayscale(0.4);
+  filter: grayscale(0.35);
 }
 
 .cast-card.cooldown-card {
@@ -1156,16 +985,6 @@ html, body {
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.8), 0 0 18px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.14);
 }
 
-.cast-card.ssr-card::before {
-  content: "";
-  position: absolute;
-  inset: 3px;
-  border: 1px solid rgba(243, 229, 171, 0.35);
-  border-radius: 4px;
-  pointer-events: none;
-  z-index: 2;
-}
-
 .cast-card.ssr-card:hover:not(.disabled-card) {
   transform: translateY(-7px);
   border-color: #fff3b8;
@@ -1178,19 +997,19 @@ html, body {
 }
 
 .cast-card.ssr-card .cast-trait-box {
-  background: rgba(20, 14, 10, 0.82);
+  background: rgba(20, 14, 10, 0.85);
   border-left: 3px solid var(--c-amber);
 }
 
 .ssr-kamon-bg {
   position: absolute;
-  right: -12px;
-  top: -12px;
-  width: 86px;
-  height: 86px;
-  color: rgba(212, 175, 55, 0.12);
+  right: 6px;
+  top: 6px;
+  width: 54px;
+  height: 54px;
+  color: rgba(243, 229, 171, 0.28);
   pointer-events: none;
-  z-index: 0;
+  z-index: 3;
 }
 
 .ssr-cost-pill {
@@ -1201,7 +1020,7 @@ html, body {
   background: linear-gradient(135deg, #f3e5ab, #d4af37);
   padding: 1px 6px;
   border-radius: 3px;
-  margin-left: 5px;
+  margin-left: 6px;
   vertical-align: middle;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
@@ -1213,166 +1032,157 @@ html, body {
 
 .cast-watermark {
   position: absolute;
-  right: 6px;
-  bottom: -8px;
-  font-size: 4.5rem;
+  right: 8px;
+  bottom: -6px;
+  font-size: 3.6rem;
   font-weight: 800;
-  color: rgba(244, 238, 215, 0.045);
+  color: rgba(244, 238, 215, 0.04);
   pointer-events: none;
   line-height: 1;
-}
-
-.cast-top {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  position: relative;
   z-index: 1;
 }
 
+/* 誘魅カードの大型ポートレート枠（カード上部全面・立ち絵全体が収まる表示） */
 .cast-portrait {
-  width: 50px;
-  height: 54px;
-  border-radius: 4px;
-  border: 1px solid rgba(212, 175, 55, 0.52);
+  width: 100%;
+  height: 210px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.45);
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 30%, #3a2229, #0d0c12);
+  background: radial-gradient(circle at 50% 45%, #3a2229, #0d0c12);
 }
 
 .cast-portrait img.card-real-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center bottom;
+  padding: 6px 8px 0;
   position: absolute;
   inset: 0;
   z-index: 2;
+  transition: transform 0.35s ease;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.75));
+}
+
+.cast-portrait.has-loaded-img .cast-portrait-kanji {
+  display: none;
 }
 
 .cast-portrait-kanji {
-  font-size: 1.55rem;
+  font-size: 4.2rem;
   font-weight: 800;
-  color: var(--c-washi);
+  color: rgba(244, 238, 215, 0.85);
+  text-shadow: 0 0 18px rgba(212, 175, 55, 0.65);
   z-index: 1;
 }
 
-.cast-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
-}
-
-.cast-role-row {
+.cast-portrait-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: 20px 10px 5px;
+  background: linear-gradient(180deg, transparent 0%, rgba(10, 8, 12, 0.88) 100%);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
-  flex-wrap: wrap;
+  pointer-events: none;
 }
 
 .cast-role-tag {
-  font-size: 0.67rem;
-  color: var(--c-amber);
-  letter-spacing: 0.06em;
-}
-
-/* ヒガン石バッジ（紅・黒・八つ槌車） */
-.higan-stone-badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.62rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 10px;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
-.stone-badge-red {
-  background: rgba(139, 0, 0, 0.35);
-  color: #ffb3be;
-  border: 1px solid rgba(201, 42, 42, 0.55);
-}
-
-.stone-badge-black {
-  background: rgba(24, 14, 34, 0.78);
-  color: #d7bde2;
-  border: 1px solid rgba(155, 89, 182, 0.5);
-}
-
-.stone-badge-gold {
-  background: rgba(212, 175, 55, 0.22);
   color: var(--c-amber-light);
-  border: 1px solid rgba(212, 175, 55, 0.65);
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+}
+
+/* カード下部の情報エリア（名前＋3ステータス＋能力説明全文） */
+.cast-card-body {
+  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  z-index: 2;
+}
+
+.cast-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .cast-name {
-  font-size: 1.04rem;
+  font-size: 1.08rem;
   font-weight: 800;
   color: var(--c-washi);
+  white-space: nowrap;
 }
 
 .cast-trait-box {
-  background: rgba(8, 8, 12, 0.68);
-  border-left: 2px solid var(--c-amber);
-  padding: 4px 7px;
+  background: rgba(8, 8, 12, 0.78);
+  border-left: 3px solid var(--c-amber);
+  padding: 5px 8px;
   border-radius: 3px;
-  position: relative;
-  z-index: 1;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  white-space: normal;
 }
 
 .cast-trait-title {
   display: block;
-  font-size: 0.67rem;
+  font-size: 0.73rem;
   font-weight: 800;
   color: var(--c-amber);
+  margin-bottom: 1px;
 }
 
 .cast-trait {
-  font-size: 0.67rem;
-  color: #e4dcc8;
-  line-height: 1.3;
+  color: #ece4d0;
+  font-size: 0.73rem;
+  line-height: 1.4;
 }
 
-/* 誘魅の3属性パラメータ表示 */
+/* 誘魅の3属性パラメータ表示（名前横のコンパクトバッジ） */
 .cast-stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  position: relative;
-  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .cast-stat-pill {
-  background: rgba(8, 8, 12, 0.75);
-  border: 1px solid rgba(212, 175, 55, 0.24);
+  background: rgba(8, 8, 12, 0.82);
+  border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: 4px;
-  padding: 3px 6px;
-  display: flex;
+  padding: 2px 6px;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  font-size: 0.75rem;
+  gap: 4px;
+  font-size: 0.72rem;
 }
 
 .cast-stat-pill.specialty {
   border-color: var(--c-amber);
-  background: rgba(212, 175, 55, 0.16);
+  background: rgba(212, 175, 55, 0.2);
 }
 
 .stat-label {
   color: #c7beab;
-  font-size: 0.69rem;
+  font-size: 0.66rem;
 }
 
 .stat-val {
   font-weight: 800;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: var(--c-washi);
 }
 
@@ -1380,12 +1190,13 @@ html, body {
 .cast-status-ribbon {
   position: absolute;
   top: 7px;
-  right: 7px;
-  font-size: 0.66rem;
+  left: 7px;
+  font-size: 0.68rem;
   font-weight: 800;
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: 3px;
-  z-index: 3;
+  z-index: 4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
 }
 
 .ribbon-assigned {
@@ -1684,8 +1495,8 @@ html, body {
 
 .cutin-stage {
   display: grid;
-  grid-template-columns: 112px 1fr 112px;
-  gap: 18px;
+  grid-template-columns: 190px 1fr;
+  gap: 22px;
   align-items: center;
   position: relative;
   z-index: 1;
@@ -1702,24 +1513,15 @@ html, body {
   animation: actorEnterLeft 0.42s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.cutin-actor-visitor {
-  animation: actorEnterRight 0.42s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
 @keyframes actorEnterLeft {
   0% { opacity: 0; transform: translateX(-28px); }
   100% { opacity: 1; transform: translateX(0); }
 }
 
-@keyframes actorEnterRight {
-  0% { opacity: 0; transform: translateX(28px); }
-  100% { opacity: 1; transform: translateX(0); }
-}
-
 .cutin-portrait-frame {
-  width: 96px;
-  height: 116px;
-  border-radius: 6px;
+  width: 190px;
+  height: 240px;
+  border-radius: 7px;
   border: 2px solid var(--c-amber);
   overflow: hidden;
   position: relative;
@@ -1727,33 +1529,46 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 16px rgba(212, 175, 55, 0.32);
   background: radial-gradient(circle at 50% 30%, #3a2229, #0d0c12);
 }
 
 .cutin-portrait-frame img.card-real-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center bottom;
+  padding: 6px 6px 0;
   position: absolute;
   inset: 0;
   z-index: 2;
 }
 
+.cutin-portrait-frame.has-loaded-img .cutin-portrait-kanji {
+  display: none;
+}
+
 .cutin-portrait-kanji {
-  font-size: 2.8rem;
+  font-size: 4.5rem;
   font-weight: 800;
   color: var(--c-washi);
-  text-shadow: 0 0 12px rgba(212, 175, 55, 0.75);
+  text-shadow: 0 0 14px rgba(212, 175, 55, 0.75);
   z-index: 1;
   line-height: 1;
 }
 
 .cutin-portrait-caption {
-  font-size: 0.68rem;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 8px 6px;
+  background: linear-gradient(180deg, transparent, rgba(10, 8, 12, 0.92));
+  font-size: 0.78rem;
+  font-weight: 800;
   color: var(--c-amber-light);
-  margin-top: 4px;
-  z-index: 1;
+  text-align: center;
+  z-index: 3;
 }
 
 .cutin-dialogue-box {

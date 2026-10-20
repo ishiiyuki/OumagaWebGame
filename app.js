@@ -621,11 +621,8 @@
         narration: visitor.successFlavor
       };
 
-      const reqs = getVisitorRequirements(visitor);
-      const primaryMeta = DATA.statsMeta[reqs[0].stat];
-
       dom.cutinBgKanji.textContent = cast.kanjiWatermark || "還";
-      dom.cutinRoomTag.textContent = `${room.name}（${room.reading}）`;
+      dom.cutinRoomTag.textContent = room.name;
 
       const rewardText = formatStake({ reputation: deltaRep, spirit: deltaSpi }, true);
       const passiveBadge = passiveNotes.length > 0 ? `（${passiveNotes.join("・")}）` : "";
@@ -633,25 +630,13 @@
 
       const safeCastImg = (cast.imagePath || "").trim();
       const castImgTag = safeCastImg
-        ? `<img src="${escapeHtml(safeCastImg)}" alt="${escapeHtml(cast.fullName)}" class="card-real-img" onerror="this.remove()">`
+        ? `<img src="${escapeHtml(safeCastImg)}" alt="${escapeHtml(cast.fullName)}" class="card-real-img" onload="this.parentElement.classList.add('has-loaded-img')" onerror="this.remove()">`
         : "";
       dom.cutinCastBox.innerHTML = `
-        <div class="cutin-portrait-frame" style="background: radial-gradient(circle at 50% 30%, ${cast.accentColor}66, #0d0c12)">
+        <div class="cutin-portrait-frame" style="background: radial-gradient(circle at 50% 45%, ${cast.accentColor}66, #0d0c12)">
           ${castImgTag}
           <span class="cutin-portrait-kanji">${escapeHtml(cast.kanjiWatermark)}</span>
-          <span class="cutin-portrait-caption">${escapeHtml(cast.title)}</span>
-        </div>
-      `;
-
-      const safeVisImg = (visitor.imagePath || "").trim();
-      const visImgTag = safeVisImg
-        ? `<img src="${escapeHtml(safeVisImg)}" alt="${escapeHtml(visitor.name)}" class="card-real-img" onerror="this.remove()">`
-        : "";
-      dom.cutinVisitorBox.innerHTML = `
-        <div class="cutin-portrait-frame" style="background: radial-gradient(circle at 50% 30%, ${primaryMeta.color}66, #0d0c12)">
-          ${visImgTag}
-          <span class="cutin-portrait-kanji">${escapeHtml(visitor.kanjiWatermark)}</span>
-          <span class="cutin-portrait-caption">${escapeHtml(visitor.category)}</span>
+          <span class="cutin-portrait-caption">${escapeHtml(cast.fullName)}</span>
         </div>
       `;
 
@@ -681,27 +666,6 @@
   /* ==========================================================================
      UI描画＆画像フォールバック付きプレースホルダー
      ========================================================================== */
-
-  function createVisualBoxHTML(imagePath, kanjiWatermark, subText, accentColor) {
-    const safeImgPath = (imagePath || "").trim();
-    const imgTag = safeImgPath
-      ? `<img src="${escapeHtml(safeImgPath)}" alt="" class="card-real-img" onerror="this.remove()">`
-      : "";
-
-    const styleAttr = accentColor
-      ? `style="background: radial-gradient(circle at 50% 30%, ${accentColor}44, #0d0c12 90%);"`
-      : "";
-
-    return `
-      <div class="card-visual-box" ${styleAttr}>
-        ${imgTag}
-        <div class="placeholder-art">
-          <span class="placeholder-kanji">${escapeHtml(kanjiWatermark || "魂")}</span>
-          <span class="placeholder-sub">${escapeHtml(subText || "")}</span>
-        </div>
-      </div>
-    `;
-  }
 
   function renderAll() {
     renderRooms();
@@ -739,9 +703,9 @@
   }
 
   function setPhaseIndicator(phaseKey) {
-    dom.phaseDusk.classList.toggle("active", phaseKey === "dusk");
-    dom.phaseOumaga.classList.toggle("active", phaseKey === "oumaga");
-    dom.phaseMidnight.classList.toggle("active", phaseKey === "midnight");
+    dom.phaseDusk?.classList.toggle("active", phaseKey === "dusk");
+    dom.phaseOumaga?.classList.toggle("active", phaseKey === "oumaga");
+    dom.phaseMidnight?.classList.toggle("active", phaseKey === "midnight");
   }
 
   /**
@@ -757,7 +721,6 @@
       const roomBonusMeta = DATA.statsMeta[room.bonusStat];
       const affinityCast = DATA.casts.find((c) => c.id === room.affinityCastId);
       const reqs = getVisitorRequirements(visitor);
-      const primaryMeta = DATA.statsMeta[reqs[0].stat];
 
       const col = document.createElement("section");
       col.className = "room-column";
@@ -788,51 +751,49 @@
                 ? `<span class="calc-bonus-highlight">+${bonusSum}</span>`
                 : "";
             const mark = chk.passed ? "○" : "×";
-            return `<span>${chk.statIcon}【${chk.statName}】<strong>${chk.baseVal}</strong>${bonusTag}＝<strong>${chk.totalVal}</strong>/${chk.reqVal}(${mark})</span>`;
+            return `<span>${chk.statIcon}${chk.statName}<strong>${chk.baseVal}</strong>${bonusTag}＝<strong>${chk.totalVal}</strong>/${chk.reqVal}(${mark})</span>`;
           })
           .join(" ／ ");
 
         const passiveHint =
           evalPreview.passiveNotes.length > 0
-            ? `<div style="font-size:0.68rem; color:#d4af37; margin-top:2px;">★${escapeHtml(evalPreview.passiveNotes.join("・"))}</div>`
+            ? `<div class="calc-passive-hint">★${escapeHtml(evalPreview.passiveNotes.join("・"))}</div>`
             : "";
 
         const unassignLabel =
           (assignedCast.deploySpiritCost || 0) > 0
-            ? `外す（雅+${assignedCast.deploySpiritCost}返却）`
+            ? `外す（雅+${assignedCast.deploySpiritCost}）`
             : "外す";
 
         const safeAssignedImg = (assignedCast.imagePath || "").trim();
-        const miniSealImgHTML = safeAssignedImg
-          ? `<img src="${escapeHtml(safeAssignedImg)}" alt="" class="card-real-img" onerror="this.remove()">`
+        const assignedImgHTML = safeAssignedImg
+          ? `<img src="${escapeHtml(safeAssignedImg)}" alt="${escapeHtml(assignedCast.fullName)}" class="card-real-img" onload="this.parentElement.classList.add('has-loaded-img')" onerror="this.remove()">`
           : "";
 
         slotInnerHTML = `
           <div class="assigned-cast-view">
-            <div class="assigned-cast-top">
-              <div class="assigned-cast-identity">
-                <div class="mini-seal" style="background:${assignedCast.accentColor}">
-                  ${miniSealImgHTML}
-                  <span>${escapeHtml(assignedCast.kanjiWatermark)}</span>
-                </div>
-                <div>
-                  <div class="assigned-cast-name">${escapeHtml(assignedCast.fullName)}</div>
-                </div>
-              </div>
-              ${
-                state.phase === "assign"
-                  ? `<button type="button" class="btn-unassign" data-unassign-room="${room.id}">${unassignLabel}</button>`
-                  : ""
-              }
+            <div class="assigned-portrait" style="background: radial-gradient(circle at 50% 45%, ${assignedCast.accentColor}66, #0d0c12)">
+              ${assignedImgHTML}
+              <span class="assigned-portrait-kanji">${escapeHtml(assignedCast.kanjiWatermark)}</span>
             </div>
-            <div class="calc-preview">
-              <div class="calc-breakdown">
-                ${breakdownItemsHTML}
-                ${passiveHint}
+            <div class="assigned-cast-main">
+              <div class="assigned-cast-top">
+                <div class="assigned-cast-name">${escapeHtml(assignedCast.fullName)}</div>
+                ${
+                  state.phase === "assign"
+                    ? `<button type="button" class="btn-unassign" data-unassign-room="${room.id}">${unassignLabel}</button>`
+                    : ""
+                }
               </div>
-              <span class="calc-verdict ${evalPreview.isSuccess ? "ok" : "ng"}">
-                ${evalPreview.isSuccess ? "鎮魂見込" : "神楽不足"}
-              </span>
+              <div class="calc-preview">
+                <div class="calc-breakdown">
+                  ${breakdownItemsHTML}
+                  ${passiveHint}
+                </div>
+                <span class="calc-verdict ${evalPreview.isSuccess ? "ok" : "ng"}">
+                  ${evalPreview.isSuccess ? "鎮魂見込" : "神楽不足"}
+                </span>
+              </div>
             </div>
           </div>
         `;
@@ -841,10 +802,9 @@
           <div class="slot-empty-prompt">
             ${
               state.selectedCastId
-                ? "▸ ここをクリックして選択中の誘魅巫女を配置 ◂"
-                : "ここにお座敷担当の誘魅巫女を配置（ドラッグ＆ドロップ または クリック）"
+                ? "▸ ここをクリックして選択中の誘魅を配置 ◂"
+                : "ここに誘魅を配置（ドラッグ＆ドロップ または クリック）"
             }
-            <span>※未配置のまま進めると【ヨモツヘグイの誘惑（鎮魂失敗）】となります</span>
           </div>
         `;
       }
@@ -876,15 +836,9 @@
         <div class="room-watermark" aria-hidden="true">${escapeHtml(room.kanjiWatermark)}</div>
 
         <div class="room-header">
-          <div class="room-title-wrap">
-            <span class="room-wooden-tag">座敷</span>
-            <div>
-              <h3 class="room-name">${escapeHtml(room.name)}</h3>
-              <span class="room-reading">${escapeHtml(room.reading)}</span>
-            </div>
-          </div>
+          <h3 class="room-name">${escapeHtml(room.name)}</h3>
           <div class="room-bonus-badge">
-            ${roomBonusMeta.icon || ""}【${roomBonusMeta.name}】+${room.bonusValue}
+            ${roomBonusMeta.icon || ""}${roomBonusMeta.name}+${room.bonusValue}
             ${
               affinityCast
                 ? `<span class="room-affinity-sub">（${escapeHtml(affinityCast.name)}:+2 / にゃる:+3）</span>`
@@ -896,16 +850,13 @@
         <!-- 来訪者（迷い込んだ客人）カード -->
         <article class="visitor-card">
           <div class="visitor-watermark" aria-hidden="true">${escapeHtml(visitor.kanjiWatermark)}</div>
-          ${createVisualBoxHTML(visitor.imagePath, visitor.kanjiWatermark, visitor.category, primaryMeta.color)}
           <div class="visitor-info">
             <div class="visitor-top-row">
-              <span class="visitor-category">${escapeHtml(visitor.category)}</span>
+              <h4 class="visitor-name">${escapeHtml(visitor.name)}</h4>
               <div class="visitor-req-group">
                 ${reqBadgesHTML}
               </div>
             </div>
-            <h4 class="visitor-name">${escapeHtml(visitor.name)}</h4>
-            <p class="visitor-desc">${escapeHtml(visitor.desc)}</p>
             <div class="visitor-stakes">
               <span class="stake-reward">現世還し：${rewardStr}</span>
               <span class="stake-penalty">常世堕ち：${penaltyStr}</span>
@@ -979,9 +930,9 @@
     if (dom.deckStatusBadge) {
       const restLabel =
         restingCasts.length > 0
-          ? ` ／ 休息中：${restingCasts.map((c) => c.name).join("・")}`
+          ? ` ／ 休息：${restingCasts.map((c) => c.name).join("・")}`
           : "";
-      dom.deckStatusBadge.textContent = `山札控え：${deckRemaining}名${restLabel}`;
+      dom.deckStatusBadge.textContent = `控え：${deckRemaining}名${restLabel}`;
     }
 
     state.handCastIds.forEach((castId) => {
@@ -1007,7 +958,7 @@
 
       const safeImg = (cast.imagePath || "").trim();
       const portraitImgHTML = safeImg
-        ? `<img src="${escapeHtml(safeImg)}" alt="${escapeHtml(cast.fullName)}" class="card-real-img" onerror="this.remove()">`
+        ? `<img src="${escapeHtml(safeImg)}" alt="${escapeHtml(cast.fullName)}" class="card-real-img" onload="this.parentElement.classList.add('has-loaded-img')" onerror="this.remove()">`
         : "";
 
       let ribbonHTML = "";
@@ -1046,24 +997,24 @@
         <div class="cast-watermark" aria-hidden="true">${escapeHtml(cast.kanjiWatermark)}</div>
         ${ssrKamonWatermarkHTML}
         ${ribbonHTML}
-        <div class="cast-top">
-          <div class="cast-portrait" style="background: radial-gradient(circle at 50% 30%, ${cast.accentColor}55, #0d0c12)">
-            ${portraitImgHTML}
-            <span class="cast-portrait-kanji">${escapeHtml(cast.kanjiWatermark)}</span>
+        <div class="cast-portrait" style="background: radial-gradient(circle at 50% 45%, ${cast.accentColor}77, #0d0c12 85%)">
+          ${portraitImgHTML}
+          <span class="cast-portrait-kanji">${escapeHtml(cast.kanjiWatermark)}</span>
+          <div class="cast-portrait-overlay">
+            <span class="cast-role-tag">${escapeHtml(cast.title)}${costPillHTML}</span>
           </div>
-          <div class="cast-meta">
-            <div class="cast-role-row">
-              <span class="cast-role-tag">${escapeHtml(cast.title)}${costPillHTML}</span>
-            </div>
+        </div>
+        <div class="cast-card-body">
+          <div class="cast-header-row">
             <h4 class="cast-name">${escapeHtml(cast.name)}</h4>
+            <div class="cast-stats-row">
+              ${statsHTML}
+            </div>
           </div>
-        </div>
-        <div class="cast-trait-box">
-          <span class="cast-trait-title">【${escapeHtml(cast.traitName)}】</span>
-          <p class="cast-trait">${escapeHtml(cast.traitDesc)}</p>
-        </div>
-        <div class="cast-stats-row">
-          ${statsHTML}
+          <div class="cast-trait-box">
+            <span class="cast-trait-title">【${escapeHtml(cast.traitName)}】</span>
+            <p class="cast-trait">${escapeHtml(cast.traitDesc)}</p>
+          </div>
         </div>
       `;
 
@@ -1107,20 +1058,20 @@
 
       dom.btnBellRedraw.disabled = !canUseBell;
       if (state.bellUsedThisNight) {
-        dom.btnBellRedraw.textContent = "🔔 呼び鈴（今宵は使用済）";
+        dom.btnBellRedraw.textContent = "🔔 呼び鈴（使用済）";
       } else if (state.spirit <= cost) {
-        dom.btnBellRedraw.textContent = `🔔 呼び鈴（雅不足 / 要${cost + 1}以上）`;
+        dom.btnBellRedraw.textContent = `🔔 呼び鈴（雅不足）`;
       } else {
-        dom.btnBellRedraw.textContent = `🔔 呼び鈴（手札入替 / 雅-${cost}）`;
+        dom.btnBellRedraw.textContent = `🔔 呼び鈴（雅-${cost}）`;
       }
     }
 
     if (state.selectedCastId) {
       const c = DATA.casts.find((item) => item.id === state.selectedCastId);
-      dom.selectionHint.textContent = `【${c.fullName}】を選択中 ― 配置したいお座敷をクリックしてください`;
+      dom.selectionHint.textContent = `【${c.fullName}】を選択中 ― 配置先のお座敷をクリック`;
     } else {
       dom.selectionHint.textContent =
-        "誘魅カードをお座敷へドラッグ＆ドロップ、またはクリックで選択して配置してください（最大3名）";
+        "誘魅をお座敷へドラッグ＆ドロップ、またはクリックで配置";
     }
   }
 

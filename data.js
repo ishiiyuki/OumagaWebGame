@@ -116,8 +116,8 @@ window.GAME_DATA = {
         party: 4
       },
       passiveType: "deploy_cost_spirit",
-      traitName: "女将の威光（八つ槌車）",
-      traitDesc: "逢曲時の主であり女将。全能力4の最高峰だが、配置時に『雅』を1消費する（解除で返却・雅1以下は配置不可）",
+      traitName: "女将の威光",
+      traitDesc: "配置時に『雅』を1消費する（解除で返却／雅1以下は配置不可）",
       cooldownTurns: 0,
       quote: "「彼岸旅館『逢曲時』へようこそ。迷いし貴方の魂を浄化する演舞、どうぞ見惚れて無事に現世へお還りなさいませ」"
     },
@@ -137,7 +137,7 @@ window.GAME_DATA = {
       },
       passiveType: "room_affinity",
       traitName: "鎮魂の神楽舞",
-      traitDesc: "神楽の源流を汲む華やかな演舞で迷い人の魂を安定させる（大広間・神楽舞台でさらに【舞踊】+1）",
+      traitDesc: "「大広間・神楽舞台」に配置時、さらに【舞踊】+1（計+2）",
       cooldownTurns: 0,
       quote: "「外から見てたよ～呼んでみて～！ 私の神楽舞で、揺らぐ魂をぴたりと鎮めてあげるね」"
     },
@@ -157,7 +157,7 @@ window.GAME_DATA = {
       },
       passiveType: "room_affinity",
       traitName: "獄門の歓待",
-      traitDesc: "酒の肴はヒトの魂という獄門の鬼。豪快な座興で宴席を沸かせる（彼岸月見の宴席でさらに【座興】+1）",
+      traitDesc: "「彼岸月見の宴席」に配置時、さらに【座興】+1（計+2）",
       cooldownTurns: 0,
       quote: "「獄門の鬼、ならくじゃ。酒の肴はヒトの魂……くふふ、今宵は極上の宴席へご案内いたしましょう」"
     },
@@ -177,7 +177,7 @@ window.GAME_DATA = {
       },
       passiveType: "room_affinity",
       traitName: "現世繋ぎの語らい",
-      traitDesc: "人懐っこい語らいで迷い人の現世への記憶を呼び覚ます猫のイザナミ（竹林望む離れ座敷でさらに【話術】+1）",
+      traitDesc: "「竹林望む離れ座敷」に配置時、さらに【話術】+1（計+2）",
       cooldownTurns: 0,
       quote: "「猫のイザナミ、まりんです！ 此岸（現世）のいろんなお話、わたしにたーっぷり聞かせてくださいね！」"
     },
@@ -198,7 +198,7 @@ window.GAME_DATA = {
       passiveType: "bonus_reputation_on_success",
       passiveValue: 1,
       traitName: "逝きは宵々、還りは──",
-      traitDesc: "逢曲時に棲む『強キ鬼』。おもてなし成功時、宿の『評判』を追加で+1高める",
+      traitDesc: "おもてなし成功時、追加で『評判』+1を獲得する",
       cooldownTurns: 0,
       quote: "「逢曲時に棲む『強キ鬼』、月下香と申します。逝きは宵々、還りは──ふふ、今宵はどちらの夢を見ましょうか」"
     },
@@ -219,7 +219,7 @@ window.GAME_DATA = {
       passiveType: "reduce_penalty_on_fail",
       passiveValue: 1,
       traitName: "宴会場の取り成し",
-      traitDesc: "常世に拾われ宴会場を任される蒼い九尾の狐。失敗時でも場を取り成しペナルティを1軽減する",
+      traitDesc: "おもてなし失敗時、受けるペナルティを1軽減する",
       cooldownTurns: 0,
       quote: "「宴会場を任されている玉藻だよ。ヨモツヘグイで常世に堕ちないよう、あたしがしっかり取り成してあげるからね」"
     },
@@ -240,7 +240,7 @@ window.GAME_DATA = {
       passiveType: "bonus_spirit_on_success",
       passiveValue: 1,
       traitName: "宵闇に響く美声",
-      traitDesc: "逢曲時の宴を彩る鬼の歌姫。おもてなし成功時、神楽の『雅』を追加で+1回復する",
+      traitDesc: "おもてなし成功時、追加で『雅』+1を回復する",
       cooldownTurns: 0,
       quote: "「歌姫のるちゃです♪ 今宵は私の美声と楽しいお酒で、お座敷の雅な情緒をたっぷり味わっていってくださいね！」"
     },
@@ -261,7 +261,7 @@ window.GAME_DATA = {
       passiveType: "room_bonus_override",
       passiveValue: 3, // 部屋のボーナス効果を+1ではなく+3として計算（2+3=5）
       traitName: "狭間の宿の采配",
-      traitDesc: "逢曲時の座敷を知り尽くす女中。配置したお座敷のボーナス効果を『+1』ではなく『+3』として計算する",
+      traitDesc: "配置したお座敷の得意属性ボーナスを『+3』にする",
       cooldownTurns: 0,
       quote: "「おつかれでしょう？ 現世へ還るその刻まで、この逢曲時でゆっくり魂を休めていってくださいね」"
     }
