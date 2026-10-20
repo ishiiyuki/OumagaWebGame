@@ -3,42 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>逢曲時 帳場録（おうまがどき ちょうばろく）</title>
-  <!-- Google Fonts: Shippori Mincho -->
+  <title>逢曲時 帳場録 | 彼岸旅館「逢曲時」おうまがとき</title>
+  <!-- Google Fonts: Cinzel, Noto Serif JP, Shippori Mincho（公式ページ準拠） -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 背景パーティクル用Canvas（狐火＆彼岸花の花弁） -->
+  <!-- 共通SVGシンボル定義：女将・常世の家紋「八つ槌車（やつづちぐるま）」 -->
+  <svg width="0" height="0" style="position:absolute; visibility:hidden;" aria-hidden="true">
+    <defs>
+      <symbol id="kamon-yatsuduchiguruma" viewBox="0 0 100 100">
+        <!-- 外輪（牛車の車輪外枠） -->
+        <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.85"/>
+        <circle cx="50" cy="50" r="39" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5"/>
+        <!-- 八つの木槌（打ち出の小槌・外向き放射） -->
+        <g stroke="currentColor" fill="currentColor">
+          <g transform="rotate(0 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(45 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(90 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(135 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(180 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(225 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(270 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(315 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+        </g>
+        <!-- 車軸（中心輪） -->
+        <circle cx="50" cy="50" r="12" fill="#0d0b0e" stroke="currentColor" stroke-width="3"/>
+        <circle cx="50" cy="50" r="4.5" fill="currentColor"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- 背景パーティクル用Canvas（迷い人の魂火・狐火＆彼岸花の花弁） -->
   <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
-  <!-- 背景の和柄オーバーレイとヴィネット -->
+  <!-- 背景の竹林・和柄オーバーレイとヴィネット -->
   <div class="bg-overlay" aria-hidden="true"></div>
 
   <!-- ================= 1. タイトル画面オーバーレイ ================= -->
   <section id="title-screen" class="screen-overlay">
     <div class="title-screen-card">
       <div class="title-screen-watermark" aria-hidden="true">逢曲時</div>
-      <div class="title-vertical-deco" aria-hidden="true">現世と常世の狭間にて――</div>
+      <div class="title-vertical-deco" aria-hidden="true">現世と常世の狭間にある死者の店――</div>
 
       <div class="title-emblem-wrap">
-        <span class="title-kicker">彼岸旅館 お座敷おもてなしカードゲーム</span>
+        <div class="title-kamon-crest" title="女将・常世の家紋『八つ槌車』">
+          <svg class="kamon-svg"><use href="#kamon-yatsuduchiguruma"></use></svg>
+        </div>
+        <span class="title-kicker">彼岸旅館「逢曲時」おうまがとき ― 神楽おもてなしカードゲーム</span>
         <div class="title-main-row">
           <div class="title-large-seal">逢曲時</div>
-          <h1 class="title-main-logo">逢曲時 帳場録<span class="title-reading">― おうまがどき ちょうばろく ―</span></h1>
+          <h1 class="title-main-logo">逢曲時 帳場録<span class="title-reading">― おうまがとき ちょうばろく ―</span></h1>
         </div>
       </div>
 
       <p class="title-catchphrase">
-        宵闇に行灯が灯る頃、今宵もお座敷へ風流な客人たちがやって来る。<br>
-        粋な<strong>【話術】</strong>、華やかな<strong>【舞踊】</strong>、賑やかな<strong>【座興】</strong>で五夜の宴を彩りましょう。
+        現世と常世の狭間にある死者の店<strong>「逢曲時（おうまがとき）」</strong>。<br>
+        何かの拍子に魂が現世から離れて迷い込んでしまった人間達を、<br>
+        <strong>誘魅巫女（いざなみのみこ）</strong>たちの神楽――<strong>【話術】【舞踊】【座興】</strong>でもてなして魂を安定させ、<br>
+        竹林を割く坂<strong>“黄泉平坂（よもつひらさか）”</strong>より現世へ送り還しましょう。
       </p>
 
       <div class="title-actions">
+        <a id="btn-title-world" class="btn-secondary btn-title-sub" href="https://oumagatoki.pages.dev/#top" target="_blank" rel="noopener noreferrer">
+          📜 世界観（公式サイトへ）
+        </a>
         <button id="btn-title-start" class="btn-primary btn-title-large" type="button">
-          🏮 暖簾をくぐる（遊び方へ）
+          🏮 暖簾をくぐる（手引書へ）
         </button>
       </div>
     </div>
@@ -47,44 +104,44 @@
   <!-- ================= 2. ゲーム開始前の遊び方説明画面 ================= -->
   <section id="intro-screen" class="screen-overlay hidden" role="dialog" aria-modal="true" aria-label="遊び方説明">
     <div class="intro-screen-card">
-      <div class="modal-watermark" aria-hidden="true">心得</div>
+      <div class="modal-watermark" aria-hidden="true">神楽</div>
       <p class="modal-subtitle">― 開帳前の手引書 ―</p>
-      <h2 class="modal-title">彼岸旅館『逢曲時』お座敷の心得</h2>
+      <h2 class="modal-title">彼岸旅館『逢曲時』お座敷と神楽の心得</h2>
 
       <div class="intro-grid">
         <div class="intro-step-box">
           <div class="intro-step-num">壱</div>
-          <h3>宿の「評判」と「雅」を守る</h3>
+          <h3>宿の「評判」と神楽の「雅」を守る</h3>
           <p>
             旅館には<strong>「🏮 評判（初期3）」</strong>と<strong>「🪭 雅（初期4）」</strong>の2つのステータスがあります。<br>
-            どちらか1つでも <strong>0</strong> になると帳場閉鎖（ゲームオーバー）。<strong>全五夜</strong>を乗り切ればクリアです！
+            迷い人が<strong>ヨモツヘグイ</strong>で常世へ堕ちたり神楽が乱れ、どちらか1つでも <strong>0</strong> になると帳場閉鎖。<strong>全五夜</strong>の送り還しを完遂すればクリアです！
           </p>
         </div>
 
         <div class="intro-step-box">
           <div class="intro-step-num">弐</div>
-          <h3>3つのお座敷と客人の所望</h3>
+          <h3>3つのお座敷と迷い人の魂鎮め</h3>
           <p>
-            毎夜「大広間・舞台」「離れの小座敷」「月見の宴席」に客人が訪れます。<br>
-            客人が求める<strong>💬【話術】・🪭【舞踊】・🍶【座興】</strong>の数値（後半は2つ同時の複合要求も出現）を確認しましょう。
+            毎夜3つのお座敷へ、現世から魂が離れた<strong>迷い人（客人）</strong>が訪れます。<br>
+            魂を安定させるための神楽<strong>💬【話術】・🪭【舞踊】・🍶【座興】</strong>の要求値を確認し、満たせば<strong>“黄泉平坂”</strong>から現世へ送り還せます。
           </p>
         </div>
 
         <div class="intro-step-box">
           <div class="intro-step-num">参</div>
-          <h3>山札ドローと「帳場の呼び鈴」</h3>
+          <h3>誘魅巫女の山札と「帳場の呼び鈴」</h3>
           <p>
-            全8名の誘魅（いざなみ）山札から毎夜<strong>4名</strong>が手札に配られます。<br>
-            手札が客人の要求と合わない時は、1夜に1回だけ<strong>「🔔 呼び鈴（雅-1）」</strong>で未配置の手札を引き直せます。
+            紅・黒の<strong>ヒガン石</strong>を身に付けた全8名の<strong>誘魅（いざなみ）</strong>山札から毎夜<strong>4名</strong>が手札に配られます。<br>
+            手札が合わない時は、1夜に1回だけ<strong>「🔔 呼び鈴（雅-1）」</strong>で未配置の誘魅を引き直せます。
           </p>
         </div>
 
         <div class="intro-step-box">
           <div class="intro-step-num">肆</div>
-          <h3>お座敷ボーナスと筆頭・常世</h3>
+          <h3>座敷ボーナスと主「女将・常世」</h3>
           <p>
-            各お座敷には得意属性<strong>+1</strong>（相性の良い誘魅（いざなみ）なら<strong>+2</strong>、帳場頭・にゃるなら<strong>+3</strong>）のボーナスがあります。<br>
-            また<strong>「筆頭・常世」</strong>は全能力4の最強枠ですが、配置時に<strong>「雅」を1消費</strong>する特別な切り札です。
+            各お座敷には得意属性<strong>+1</strong>（相性の良い誘魅なら<strong>+2</strong>、帳場頭・にゃるなら<strong>+3</strong>）のボーナスがあります。<br>
+            また八つ槌車を背負う逢曲時の主<strong>「女将・常世」</strong>は全能力4の最強枠ですが、配置時に<strong>「雅」を1消費</strong>する特別な切り札です。
           </p>
         </div>
       </div>
@@ -103,11 +160,14 @@
     
     <!-- ================= 上部：ステータス＆帳場録（ログ）エリア ================= -->
     <header class="top-bar">
-      <!-- 旅館タイトル（縦書き風エンブレム＋横書き） -->
+      <!-- 旅館タイトル（八つ槌車家紋＋縦書き朱印＋タイトル） -->
       <div class="title-block">
+        <div class="header-kamon" title="女将・常世の家紋『八つ槌車』">
+          <svg class="kamon-svg"><use href="#kamon-yatsuduchiguruma"></use></svg>
+        </div>
         <div class="title-seal">逢曲時</div>
         <div class="title-text">
-          <span class="subtitle">現世と常世の狭間の宿</span>
+          <span class="subtitle">現世と常世の狭間・死者の店</span>
           <h1>逢曲時 帳場録</h1>
         </div>
       </div>
@@ -120,17 +180,17 @@
           <span id="night-total" class="night-total">/ 全五夜</span>
         </div>
         <div class="phase-steps">
-          <span id="phase-dusk" class="phase-step">一、夕暮れ</span>
+          <span id="phase-dusk" class="phase-step">一、宵の口</span>
           <span class="phase-arrow">▸</span>
-          <span id="phase-oumaga" class="phase-step active">二、逢魔が時</span>
+          <span id="phase-oumaga" class="phase-step active">二、逢曲時</span>
           <span class="phase-arrow">▸</span>
-          <span id="phase-midnight" class="phase-step">三、夜更け</span>
+          <span id="phase-midnight" class="phase-step">三、黄泉平坂</span>
         </div>
       </div>
 
       <!-- 旅館ステータス（評判・雅） -->
       <div class="status-panel">
-        <div class="status-item" id="status-reputation">
+        <div class="status-item" id="status-reputation" title="彼岸旅館『逢曲時』の評判（0になると帳場閉鎖）">
           <div class="status-header">
             <span class="status-icon">🏮</span>
             <span class="status-name">評判</span>
@@ -139,7 +199,7 @@
           <div id="reputation-tokens" class="token-row" aria-label="評判ゲージ"></div>
         </div>
 
-        <div class="status-item" id="status-spirit">
+        <div class="status-item" id="status-spirit" title="神楽とヒガン石の雅（0になると帳場閉鎖）">
           <div class="status-header">
             <span class="status-icon">🪭</span>
             <span class="status-name">雅</span>
@@ -153,7 +213,10 @@
       <div class="log-panel">
         <div class="log-header">
           <span>📜 帳場録</span>
-          <button id="btn-help" class="btn-sub" type="button" title="遊び方を確認">手引書</button>
+          <div class="log-header-btns">
+            <a id="btn-world" class="btn-sub" href="https://oumagatoki.pages.dev/#top" target="_blank" rel="noopener noreferrer" title="逢曲時の公式サイトを開く">世界観</a>
+            <button id="btn-help" class="btn-sub" type="button" title="遊び方を確認">手引書</button>
+          </div>
         </div>
         <div id="game-log" class="log-entries" role="log" aria-live="polite"></div>
       </div>
@@ -163,12 +226,12 @@
     <main class="rooms-section">
       <div class="section-heading">
         <span class="heading-line"></span>
-        <h2>お座敷一覧 <small>― 客人の所望する芸（話術・舞踊・座興）を見極め、誘魅（いざなみ）を配置せよ ―</small></h2>
+        <h2>お座敷一覧 <small>― 現世から迷い込んだ客人の魂を神楽（話術・舞踊・座興）で鎮め、“黄泉平坂”より現世へ送り還せ ―</small></h2>
         <span class="heading-line"></span>
       </div>
 
       <div id="rooms-grid" class="rooms-grid">
-        <!-- JSで3部屋（大広間・舞台 / 離れの小座敷 / 月見の宴席）を動的生成 -->
+        <!-- JSで3部屋を動的生成 -->
       </div>
     </main>
 
@@ -176,10 +239,10 @@
     <footer class="hand-section">
       <div class="hand-header">
         <div class="hand-title-group">
-          <h3>帳場待機 誘魅（いざなみ）（手札 4枚）</h3>
+          <h3>帳場待機 誘魅巫女（いざなみのみこ）（手札 4枚）</h3>
           <span id="deck-status-badge" class="deck-status-badge">山札控え：4名</span>
           <span id="selection-hint" class="selection-hint">
-            カードを客室へドラッグ＆ドロップ、またはクリックで選択してお座敷へ配置してください（最大3名）
+            誘魅カードを客室へドラッグ＆ドロップ、またはクリックで選択してお座敷へ配置してください（最大3名）
           </span>
         </div>
         <div class="action-buttons">
@@ -188,43 +251,43 @@
           </button>
           <button id="btn-clear-assign" class="btn-secondary" type="button">配置を戻す</button>
           <button id="btn-resolve-night" class="btn-primary" type="button">
-            <span class="btn-lantern">🕯️</span> 夜を進める（お座敷判定）
+            <span class="btn-lantern">🕯️</span> 神楽を奏する（送り還し判定）
           </button>
         </div>
       </div>
 
       <div id="cast-hand" class="cast-hand">
-        <!-- JSで4枚のキャストカードを動的生成 -->
+        <!-- JSで4枚の誘魅カードを動的生成 -->
       </div>
     </footer>
 
   </div>
 
-  <!-- ================= カットイン：おもてなし成功ミニ会話ウィンドウ ================= -->
+  <!-- ================= カットイン：おもてなし成功（鎮魂・現世還し）ミニ会話ウィンドウ ================= -->
   <div id="cutin-overlay" class="cutin-overlay hidden" role="dialog" aria-modal="true" aria-label="おもてなし会話カットイン">
     <div class="cutin-banner">
-      <div class="cutin-bg-kanji" id="cutin-bg-kanji" aria-hidden="true">饗</div>
+      <div class="cutin-bg-kanji" id="cutin-bg-kanji" aria-hidden="true">還</div>
 
       <!-- 上部ヘッダー（客室名・成功朱印・獲得報酬） -->
       <div class="cutin-header">
-        <span id="cutin-room-tag" class="cutin-room-tag">大広間・舞台</span>
-        <span class="cutin-title-seal">おもてなし成功 ― お座敷が華やいだ ―</span>
+        <span id="cutin-room-tag" class="cutin-room-tag">大広間・神楽舞台</span>
+        <span class="cutin-title-seal">神楽成就 ― 魂鎮まり、黄泉平坂より現世へ還る ―</span>
         <span id="cutin-reward-badge" class="cutin-reward-badge">評判+1</span>
       </div>
 
-      <!-- 会話メイン領域（左：キャスト / 中央：2〜3行の掛け合い / 右：宿泊客） -->
+      <!-- 会話メイン領域（左：誘魅 / 中央：2〜3行の掛け合い / 右：迷い人） -->
       <div class="cutin-stage">
         <div id="cutin-cast-box" class="cutin-actor cutin-actor-cast">
-          <!-- JSでキャスト立ち絵プレースホルダーまたはimgを挿入 -->
+          <!-- JSで誘魅立ち絵またはプレースホルダーを挿入 -->
         </div>
 
         <div class="cutin-dialogue-box">
           <div class="cutin-speech cutin-speech-cast">
-            <span id="cutin-cast-speaker" class="cutin-speaker">筆頭・常世</span>
+            <span id="cutin-cast-speaker" class="cutin-speaker">女将・常世</span>
             <p id="cutin-cast-line" class="cutin-line"></p>
           </div>
           <div class="cutin-speech cutin-speech-visitor">
-            <span id="cutin-visitor-speaker" class="cutin-speaker">迷い込んだ旅人</span>
+            <span id="cutin-visitor-speaker" class="cutin-speaker">夕霧に迷い込んだ旅人</span>
             <p id="cutin-visitor-line" class="cutin-line"></p>
           </div>
           <p id="cutin-narration" class="cutin-narration"></p>
@@ -236,7 +299,7 @@
       </div>
 
       <div class="cutin-footer">
-        <button id="btn-cutin-next" class="btn-cutin-next" type="button">次へ ▸ <small>（クリックで進む）</small></button>
+        <button id="btn-cutin-next" class="btn-cutin-next" type="button">黄泉平坂へ見送る ▸ <small>（クリックで進む）</small></button>
       </div>
     </div>
   </div>
@@ -262,16 +325,16 @@
       <p class="modal-subtitle">― 帳場衆の心得 ―</p>
       <h2 class="modal-title">彼岸旅館『逢曲時』手引書</h2>
       <div class="modal-body help-content">
-        <p>ここは現世と常世の狭間に佇む彼岸旅館<strong>「逢曲時（おうまがどき）」</strong>。<br>あなたは帳場預かりとして、<strong>全五夜</strong>にわたりお座敷へ訪れる客人たちを粋にもてなし、宿の<strong>「🏮 評判（初期3／最大5）」</strong>と<strong>「🪭 雅（初期4／最大5）」</strong>を守り抜かねばなりません。</p>
+        <p>ここは現世と常世の狭間にある死者の店、彼岸旅館<strong>「逢曲時（おうまがとき）」</strong>。<br>あなたは帳場預かりとして、<strong>全五夜</strong>にわたり何かの拍子に現世から魂が離れて迷い込んだ人間たちを<strong>誘魅巫女（いざなみのみこ）</strong>の神楽でもてなし、竹林を割く坂<strong>“黄泉平坂（よもつひらさか）”</strong>より現世へ送り還しつつ、宿の<strong>「🏮 評判（初期3／最大5）」</strong>と<strong>「🪭 雅（初期4／最大5）」</strong>を守り抜かねばなりません。</p>
         <ul>
-          <li><strong>一、夕暮れ（来訪＆ドロー）：</strong>「大広間・舞台」「離れの小座敷」「月見の宴席」の3部屋に客人が訪れます。客人はそれぞれ<strong>💬【話術】・🪭【舞踊】・🍶【座興】</strong>の要求値（後半の夜は2つ同時に求める複合要求や要求5も出現）を持っています。<br>
-          また、全8名の誘魅（いざなみ）山札からランダムで<strong>4名</strong>が手札として配られます。</li>
-          <li><strong>二、逢魔が時（配置＆呼び鈴）：</strong>手札の誘魅（いざなみ）から各お座敷に1名ずつ配置します。<br>
+          <li><strong>一、宵の口（迷い人来訪＆ドロー）：</strong>「大広間・神楽舞台」「竹林望む離れ座敷」「彼岸月見の宴席」の3部屋に迷い人が訪れます。客人はそれぞれ魂を安定させるための神楽<strong>💬【話術】・🪭【舞踊】・🍶【座興】</strong>の要求値（後半の夜は複合要求や要求5も出現）を持っています。<br>
+          また、紅や黒の<strong>ヒガン石</strong>を身に付けた全8名の誘魅（いざなみ）山札からランダムで<strong>4名</strong>が手札として配られます。</li>
+          <li><strong>二、逢曲時（誘魅配置＆呼び鈴）：</strong>手札の誘魅から各お座敷に1名ずつ配置します。<br>
           ※<strong>「🔔 呼び鈴（手札入替）」：</strong>1夜に1回だけ<strong>「雅」を1消費</strong>して、未配置の手札をすべて山札に戻し、新しく引き直すことができます。</li>
-          <li><strong>三、【女将の威光】筆頭・常世と個性豊かな誘魅（いざなみ）：</strong><br>
-          ・<strong>筆頭・常世（話4/舞4/興4）：</strong>あらゆる芸事に通じる最高峰の切り札ですが、格式が高いため<strong>お座敷へ配置する際に「雅」を1消費</strong>します（配置を外せば「雅」は返却されます。現在の「雅」が1の時は配置不可）。<br>
-          ・他にも<strong>舞姫・ハルカ（舞4）</strong>、<strong>粋人・ならく（興4）</strong>、<strong>見習い・まりん（話4）</strong>のスペシャリストや、<strong>看板娘・月下香（成功時評判+1）</strong>、<strong>歌姫・るちゃ（成功時雅+1）</strong>、<strong>姉御肌・たまも（失敗ペナルティ1軽減）</strong>、<strong>帳場頭・にゃる（部屋ボーナスを+3にする）</strong>が活躍します。</li>
-          <li><strong>四、夜更け〜夜明け：</strong>要求値を満たせば<strong>【おもてなし成功（お座敷が華やいだ）】</strong>となり会話カットインが発生！ 不足や未配置の場合は<strong>【不興を買ってしまった（座が白けてしまった）】</strong>となります。「評判」または「雅」が <strong>0</strong> になるとゲームオーバー。第五夜を乗り切ればクリアです！</li>
+          <li><strong>三、【女将の威光（八つ槌車）】女将・常世と個性豊かな誘魅巫女：</strong><br>
+          ・<strong>女将・常世（話4/舞4/興4）：</strong>八つ槌車の家紋を背負う逢曲時の主。あらゆる神楽に通じる最高峰の切り札ですが、<strong>お座敷へ配置する際に「雅」を1消費</strong>します（配置を外せば「雅」は返却されます。現在の「雅」が1の時は配置不可）。<br>
+          ・他にも<strong>芸者・ハルカ（舞4）</strong>、<strong>獄門鬼女中・ならく（興4）</strong>、<strong>猫の誘魅・まりん（話4）</strong>のスペシャリストや、<strong>強キ鬼・月下香（成功時評判+1）</strong>、<strong>歌姫・るちゃ（成功時雅+1）</strong>、<strong>蒼き九尾・玉藻（失敗ペナルティ1軽減）</strong>、<strong>帳場頭・にゃる（座敷ボーナスを+3にする）</strong>が活躍します。</li>
+          <li><strong>四、黄泉平坂（送り還し判定）〜夜明け：</strong>要求値を満たせば<strong>【神楽成就（黄泉平坂より現世へ還る）】</strong>となり会話カットインが発生！ 不足や未配置の場合は悪霊の<strong>【ヨモツヘグイの誘惑（常世へ惹かれる）】</strong>となります。「評判」または「雅」が <strong>0</strong> になるとゲームオーバー。第五夜を乗り切ればクリアです！</li>
         </ul>
       </div>
       <div class="modal-actions">
