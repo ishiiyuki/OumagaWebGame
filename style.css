@@ -1,0 +1,1681 @@
+@charset "UTF-8";
+
+/* ==========================================================================
+   『逢曲時 帳場録』 スタイルシート
+   カラーパレット:
+   - 深い藍墨色 (#12131a)
+   - 彼岸花の緋色 (#c92a2a)
+   - 行灯の琥珀色 (#e6a15c)
+   - 和紙の生成り色 (#f4eed7)
+   ========================================================================== */
+
+:root {
+  --c-bg-deep: #12131a;
+  --c-bg-panel: #1b1d28;
+  --c-bg-wood: #231b18;
+  --c-crimson: #c92a2a;
+  --c-crimson-glow: rgba(201, 42, 42, 0.55);
+  --c-amber: #e6a15c;
+  --c-amber-soft: rgba(230, 161, 92, 0.25);
+  --c-washi: #f4eed7;
+  --c-washi-dark: #dfd3b3;
+  --c-ink: #221e1d;
+  --c-ink-muted: #5c5346;
+
+  --c-talk: #3b7a9e;
+  --c-dance: #d63864;
+  --c-party: #d4942a;
+
+  --font-serif: "Shippori Mincho", "Yu Mincho", "MS PMincho", serif;
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.65);
+  --border-gold: 1px solid rgba(230, 161, 92, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--c-bg-deep);
+  color: var(--c-washi);
+  font-family: var(--font-serif);
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 背景パーティクル＆和柄オーバーレイ */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(230, 161, 92, 0.08) 0%, transparent 65%),
+    radial-gradient(circle at 50% 50%, transparent 55%, rgba(8, 8, 12, 0.85) 100%),
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.012) 0px,
+      rgba(255, 255, 255, 0.012) 2px,
+      transparent 2px,
+      transparent 10px
+    );
+}
+
+/* メインレイアウト */
+.app-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 12px 20px 18px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ==========================================================================
+   上部：ステータス＆帳場録エリア
+   ========================================================================== */
+.top-bar {
+  display: grid;
+  grid-template-columns: auto 250px 270px 1fr;
+  gap: 14px;
+  align-items: stretch;
+  background: linear-gradient(180deg, rgba(28, 30, 42, 0.94), rgba(18, 19, 26, 0.94));
+  border: var(--border-gold);
+  border-top: 2px solid var(--c-amber);
+  border-radius: 6px;
+  padding: 10px 16px;
+  box-shadow: var(--shadow-card);
+}
+
+/* タイトルブロック */
+.title-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 10px;
+  border-right: 1px solid rgba(230, 161, 92, 0.25);
+}
+
+.title-seal {
+  writing-mode: vertical-rl;
+  background: var(--c-crimson);
+  color: var(--c-washi);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.15em;
+  padding: 6px 5px;
+  border: 1px solid rgba(244, 238, 215, 0.6);
+  border-radius: 3px;
+  box-shadow: 0 0 12px var(--c-crimson-glow);
+}
+
+.title-text .subtitle {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--c-amber);
+  letter-spacing: 0.15em;
+}
+
+.title-text h1 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--c-washi);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+
+/* 夜の進行・フェーズ表示 */
+.phase-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(10, 11, 16, 0.55);
+  border: 1px solid rgba(230, 161, 92, 0.2);
+  border-radius: 4px;
+}
+
+.night-indicator {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.night-label {
+  font-size: 0.75rem;
+  color: #b8b09c;
+}
+
+.night-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--c-amber);
+  text-shadow: 0 0 8px rgba(230, 161, 92, 0.4);
+}
+
+.night-total {
+  font-size: 0.8rem;
+  color: #9e9583;
+}
+
+.phase-steps {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+}
+
+.phase-step {
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #888276;
+  transition: all 0.3s ease;
+}
+
+.phase-step.active {
+  background: rgba(201, 42, 42, 0.3);
+  color: var(--c-washi);
+  border: 1px solid var(--c-crimson);
+  font-weight: 700;
+  box-shadow: 0 0 8px rgba(201, 42, 42, 0.4);
+}
+
+.phase-arrow {
+  color: #5c564b;
+  font-size: 0.7rem;
+}
+
+/* 旅館ステータス（評判・雅） */
+.status-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(10, 11, 16, 0.55);
+  border: 1px solid rgba(230, 161, 92, 0.2);
+  border-radius: 4px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 95px;
+}
+
+.status-icon {
+  font-size: 0.95rem;
+}
+
+.status-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.status-num {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--c-amber);
+  margin-left: auto;
+}
+
+.token-row {
+  display: flex;
+  gap: 5px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.token-pip {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(230, 161, 92, 0.45);
+  background: rgba(255, 255, 255, 0.05);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.35s ease, box-shadow 0.35s ease;
+}
+
+.token-pip.active.reputation {
+  background: radial-gradient(circle at 35% 35%, #ffd280, #d97724);
+  box-shadow: 0 0 8px rgba(230, 161, 92, 0.75);
+}
+
+.token-pip.active.spirit {
+  background: radial-gradient(circle at 35% 35%, #ffb3d1, #c92a68);
+  border-color: #ff8fb8;
+  box-shadow: 0 0 8px rgba(230, 90, 145, 0.75);
+}
+
+.status-pulse-up {
+  animation: pulseUp 0.6s ease;
+}
+.status-pulse-down {
+  animation: pulseDown 0.6s ease;
+}
+
+@keyframes pulseUp {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); filter: brightness(1.35); }
+}
+
+@keyframes pulseDown {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); color: var(--c-crimson); }
+  75% { transform: translateX(4px); color: var(--c-crimson); }
+}
+
+/* 帳場録（ログ）パネル */
+.log-panel {
+  display: flex;
+  flex-direction: column;
+  background: rgba(12, 12, 17, 0.78);
+  border: 1px solid rgba(230, 161, 92, 0.25);
+  border-radius: 4px;
+  padding: 6px 10px;
+  max-height: 82px;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--c-amber);
+  margin-bottom: 3px;
+  border-bottom: 1px solid rgba(230, 161, 92, 0.15);
+  padding-bottom: 2px;
+}
+
+.btn-sub {
+  background: rgba(230, 161, 92, 0.15);
+  color: var(--c-washi);
+  border: 1px solid rgba(230, 161, 92, 0.45);
+  border-radius: 3px;
+  padding: 1px 8px;
+  font-family: var(--font-serif);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-sub:hover {
+  background: rgba(230, 161, 92, 0.35);
+}
+
+.log-entries {
+  overflow-y: auto;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #e4decb;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 4px;
+}
+
+.log-entry {
+  animation: fadeIn 0.3s ease;
+}
+
+.log-entry.log-success {
+  color: #f5c06b;
+}
+
+.log-entry.log-fail {
+  color: #ff8080;
+}
+
+/* ==========================================================================
+   中央：客室エリア（3部屋）
+   ========================================================================== */
+.rooms-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.section-heading h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--c-amber);
+  letter-spacing: 0.12em;
+}
+
+.section-heading h2 small {
+  font-size: 0.78rem;
+  color: #bfb6a2;
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.heading-line {
+  flex: 1;
+  max-width: 180px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(230, 161, 92, 0.5), transparent);
+}
+
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* 各客室ボード */
+.room-column {
+  position: relative;
+  background: linear-gradient(180deg, rgba(31, 25, 25, 0.92) 0%, rgba(19, 20, 28, 0.95) 100%);
+  border: 1px solid rgba(230, 161, 92, 0.38);
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+/* 客室の背景透かし漢字 */
+.room-watermark {
+  position: absolute;
+  top: -12px;
+  right: 8px;
+  font-size: 5.5rem;
+  font-weight: 800;
+  color: rgba(244, 238, 215, 0.04);
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+}
+
+.room-column.drag-over,
+.room-column.selectable-target:hover {
+  border-color: var(--c-amber);
+  box-shadow: 0 0 18px rgba(230, 161, 92, 0.35), var(--shadow-card);
+  transform: translateY(-2px);
+}
+
+.room-column.selectable-target {
+  cursor: pointer;
+  border-color: rgba(230, 161, 92, 0.75);
+}
+
+/* 客室ヘッダー */
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(230, 161, 92, 0.25);
+  padding-bottom: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.room-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-wooden-tag {
+  writing-mode: vertical-rl;
+  background: linear-gradient(180deg, #4a3525, #2f2016);
+  color: var(--c-washi);
+  border: 1px solid var(--c-amber);
+  padding: 5px 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  border-radius: 2px;
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.6);
+}
+
+.room-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--c-washi);
+  letter-spacing: 0.08em;
+}
+
+.room-reading {
+  display: block;
+  font-size: 0.68rem;
+  color: #a89f8d;
+}
+
+.room-bonus-badge {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: rgba(230, 161, 92, 0.14);
+  border: 1px solid rgba(230, 161, 92, 0.45);
+  color: var(--c-amber);
+  text-align: right;
+}
+
+.room-affinity-sub {
+  display: block;
+  font-size: 0.65rem;
+  color: #d6ccb8;
+  font-weight: 400;
+}
+
+/* 来訪者・怪異カード（和紙調） */
+.visitor-card {
+  position: relative;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(201, 42, 42, 0.08), transparent 60%),
+    linear-gradient(135deg, var(--c-washi) 0%, var(--c-washi-dark) 100%);
+  color: var(--c-ink);
+  border: 1px solid #b5a482;
+  border-left: 5px solid var(--c-crimson);
+  border-radius: 4px;
+  padding: 10px 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  overflow: hidden;
+  animation: cardDeal 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes cardDeal {
+  0% {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 来訪者カードの透かし漢字 */
+.visitor-watermark {
+  position: absolute;
+  right: 6px;
+  bottom: -10px;
+  font-size: 4.4rem;
+  font-weight: 800;
+  color: rgba(34, 30, 29, 0.08);
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* プレースホルダー・サムネイル枠 */
+.card-visual-box {
+  width: 68px;
+  min-height: 82px;
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid rgba(34, 30, 29, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #2b1d1d 0%, #14151f 100%);
+  color: var(--c-washi);
+}
+
+.card-visual-box img.card-real-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.placeholder-art {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+  background-image: radial-gradient(rgba(230, 161, 92, 0.2) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+.placeholder-kanji {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--c-washi);
+  text-shadow: 0 0 10px rgba(201, 42, 42, 0.8);
+  line-height: 1.1;
+}
+
+.placeholder-sub {
+  font-size: 0.62rem;
+  color: var(--c-amber);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.visitor-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
+  position: relative;
+  z-index: 1;
+}
+
+.visitor-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.visitor-req-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.visitor-category {
+  font-size: 0.66rem;
+  font-weight: 700;
+  background: var(--c-ink);
+  color: var(--c-washi);
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+
+.visitor-req-badge {
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 3px;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+}
+
+.stat-bg-talk { background: var(--c-talk); }
+.stat-bg-dance { background: var(--c-dance); }
+.stat-bg-party { background: var(--c-party); }
+
+.visitor-name {
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--c-ink);
+}
+
+.visitor-desc {
+  font-size: 0.72rem;
+  color: var(--c-ink-muted);
+  line-height: 1.35;
+}
+
+.visitor-stakes {
+  display: flex;
+  gap: 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-top: 1px dashed rgba(34, 30, 29, 0.25);
+  padding-top: 4px;
+}
+
+.stake-reward { color: #2b6cb0; }
+.stake-penalty { color: #b82020; }
+
+/* キャスト配置スロット（各客室の下段） */
+.assignment-slot {
+  position: relative;
+  min-height: 108px;
+  border: 2px dashed rgba(230, 161, 92, 0.35);
+  border-radius: 5px;
+  background: rgba(12, 13, 18, 0.65);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  transition: all 0.25s ease;
+}
+
+.assignment-slot.filled {
+  border-style: solid;
+  border-color: var(--c-amber);
+  background: linear-gradient(135deg, rgba(40, 32, 26, 0.9), rgba(22, 23, 32, 0.95));
+}
+
+.slot-empty-prompt {
+  text-align: center;
+  color: #8c8474;
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.slot-empty-prompt span {
+  display: block;
+  font-size: 0.7rem;
+  color: #6b6457;
+  margin-top: 2px;
+}
+
+/* 配置済みキャスト表示 */
+.assigned-cast-view {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: ripplePlace 0.35s ease;
+}
+
+@keyframes ripplePlace {
+  0% {
+    transform: scale(0.92);
+    box-shadow: 0 0 0 0 rgba(230, 161, 92, 0.7);
+  }
+  70% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 12px rgba(230, 161, 92, 0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.assigned-cast-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.assigned-cast-identity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-seal {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--c-washi);
+  border: 1px solid rgba(255,255,255,0.4);
+}
+
+.assigned-cast-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--c-washi);
+}
+
+.btn-unassign {
+  background: rgba(255, 255, 255, 0.08);
+  color: #d4cbb8;
+  border: 1px solid rgba(230, 161, 92, 0.35);
+  border-radius: 3px;
+  padding: 2px 7px;
+  font-family: var(--font-serif);
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.btn-unassign:hover {
+  background: rgba(201, 42, 42, 0.4);
+  color: #fff;
+}
+
+/* 見込み判定プレビューバー */
+.calc-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 0.76rem;
+  border: 1px solid rgba(230, 161, 92, 0.2);
+}
+
+.calc-breakdown {
+  color: #dcd3be;
+}
+
+.calc-bonus-highlight {
+  color: var(--c-amber);
+  font-weight: 700;
+}
+
+.calc-verdict {
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.72rem;
+}
+
+.calc-verdict.ok {
+  background: rgba(78, 135, 82, 0.35);
+  color: #a3f7a7;
+  border: 1px solid #5b8c5a;
+}
+
+.calc-verdict.ng {
+  background: rgba(201, 42, 42, 0.35);
+  color: #ff9e9e;
+  border: 1px solid var(--c-crimson);
+}
+
+/* 解決フェーズの朱印スタンプ演出 */
+.resolution-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 13, 18, 0.86);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  text-align: center;
+  gap: 8px;
+  animation: fadeIn 0.25s ease;
+}
+
+.stamp-seal {
+  font-size: 1.08rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 2px solid;
+  transform: rotate(-3deg);
+  animation: stampSlam 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.stamp-seal small {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+  opacity: 0.92;
+}
+
+.stamp-seal.success {
+  color: #ffd57e;
+  border-color: var(--c-amber);
+  background: rgba(230, 161, 92, 0.2);
+  box-shadow: 0 0 18px rgba(230, 161, 92, 0.5);
+}
+
+.stamp-seal.failure {
+  color: #ff7b7b;
+  border-color: var(--c-crimson);
+  background: rgba(201, 42, 42, 0.25);
+  box-shadow: 0 0 18px rgba(201, 42, 42, 0.6);
+}
+
+@keyframes stampSlam {
+  0% {
+    opacity: 0;
+    transform: scale(2.1) rotate(-12deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-4deg);
+  }
+}
+
+.resolution-flavor {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--c-washi);
+}
+
+.resolution-delta {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--c-amber);
+}
+
+/* ==========================================================================
+   下部：手札（キャスト待機枠）エリア
+   ========================================================================== */
+.hand-section {
+  background: linear-gradient(180deg, rgba(24, 21, 24, 0.94), rgba(14, 15, 20, 0.98));
+  border: var(--border-gold);
+  border-radius: 6px;
+  padding: 10px 16px 14px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hand-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hand-title-group h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--c-amber);
+  letter-spacing: 0.1em;
+}
+
+.deck-status-badge {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--c-washi);
+  background: rgba(230, 161, 92, 0.16);
+  border: 1px solid rgba(230, 161, 92, 0.45);
+  border-radius: 3px;
+  padding: 2px 8px;
+}
+
+.selection-hint {
+  font-size: 0.76rem;
+  color: #cfc6b2;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-bell {
+  background: linear-gradient(135deg, #b87b28 0%, #7d4e14 100%);
+  color: var(--c-washi);
+  border: 1px solid #ffd57e;
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(230, 161, 92, 0.3);
+  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-bell:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.14);
+}
+
+.btn-bell:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #c92a2a 0%, #8f1919 100%);
+  color: var(--c-washi);
+  border: 1px solid var(--c-amber);
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(201, 42, 42, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(230, 161, 92, 0.55);
+  filter: brightness(1.1);
+}
+
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: #dcd3be;
+  border: 1px solid rgba(230, 161, 92, 0.38);
+  border-radius: 4px;
+  padding: 7px 13px;
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(230, 161, 92, 0.2);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* キャストカード4枚グリッド */
+.cast-hand {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* 木札・和紙仕立てのキャストカード */
+.cast-card {
+  position: relative;
+  background:
+    linear-gradient(165deg, rgba(46, 35, 29, 0.96) 0%, rgba(25, 22, 26, 0.98) 100%);
+  border: 1px solid rgba(230, 161, 92, 0.45);
+  border-top: 3px solid var(--c-amber);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  cursor: grab;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+  overflow: hidden;
+  animation: cardDeal 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cast-card:hover:not(.disabled-card) {
+  transform: translateY(-6px);
+  border-color: var(--c-washi);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7), 0 0 14px rgba(230, 161, 92, 0.3);
+}
+
+.cast-card.selected {
+  transform: translateY(-8px);
+  border-color: var(--c-crimson);
+  box-shadow: 0 0 20px rgba(201, 42, 42, 0.75);
+}
+
+.cast-card.assigned-card {
+  opacity: 0.42;
+  filter: grayscale(0.4);
+}
+
+.cast-card.cooldown-card {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: #555;
+}
+
+/* 「筆頭・常世」専用の特別SSR風金枠デザイン */
+.cast-card.ssr-card {
+  background:
+    radial-gradient(circle at 85% 15%, rgba(255, 215, 100, 0.22), transparent 55%),
+    linear-gradient(160deg, rgba(64, 45, 20, 0.98) 0%, rgba(28, 20, 26, 0.99) 60%, rgba(48, 32, 16, 0.98) 100%);
+  border: 2px solid #f5cc5c;
+  border-top: 4px solid #ffe484;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.75), 0 0 18px rgba(230, 180, 34, 0.38), inset 0 0 15px rgba(255, 215, 100, 0.14);
+}
+
+.cast-card.ssr-card::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(255, 228, 132, 0.35);
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cast-card.ssr-card:hover:not(.disabled-card) {
+  transform: translateY(-7px);
+  border-color: #fff3b8;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.8), 0 0 26px rgba(255, 215, 90, 0.65);
+}
+
+.cast-card.ssr-card .cast-name {
+  color: #ffe89e;
+  text-shadow: 0 0 10px rgba(230, 180, 34, 0.55);
+}
+
+.cast-card.ssr-card .cast-trait-box {
+  background: rgba(24, 16, 12, 0.78);
+  border-left: 3px solid #ffd866;
+}
+
+.ssr-cost-pill {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: #24180b;
+  background: linear-gradient(135deg, #ffe68f, #d99b26);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.cast-card.cost-locked-card {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.cast-watermark {
+  position: absolute;
+  right: 6px;
+  bottom: -8px;
+  font-size: 4.5rem;
+  font-weight: 800;
+  color: rgba(244, 238, 215, 0.05);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.cast-top {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.cast-portrait {
+  width: 50px;
+  height: 54px;
+  border-radius: 4px;
+  border: 1px solid rgba(230, 161, 92, 0.5);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 30%, #3a2929, #151621);
+}
+
+.cast-portrait img.card-real-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.cast-portrait-kanji {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--c-washi);
+  z-index: 1;
+}
+
+.cast-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cast-role-tag {
+  font-size: 0.68rem;
+  color: var(--c-amber);
+  letter-spacing: 0.1em;
+}
+
+.cast-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--c-washi);
+}
+
+.cast-trait-box {
+  background: rgba(12, 13, 18, 0.6);
+  border-left: 2px solid var(--c-amber);
+  padding: 4px 7px;
+  border-radius: 3px;
+  position: relative;
+  z-index: 1;
+}
+
+.cast-trait-title {
+  display: block;
+  font-size: 0.67rem;
+  font-weight: 800;
+  color: var(--c-amber);
+}
+
+.cast-trait {
+  font-size: 0.68rem;
+  color: #e4dcc8;
+  line-height: 1.3;
+}
+
+/* キャストの3属性パラメータ表示 */
+.cast-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.cast-stat-pill {
+  background: rgba(10, 11, 16, 0.68);
+  border: 1px solid rgba(230, 161, 92, 0.25);
+  border-radius: 4px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.76rem;
+}
+
+.cast-stat-pill.specialty {
+  border-color: var(--c-amber);
+  background: rgba(230, 161, 92, 0.16);
+}
+
+.stat-label {
+  color: #c7beab;
+  font-size: 0.7rem;
+}
+
+.stat-val {
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: var(--c-washi);
+}
+
+/* 状態バッジ（配置中・休息中・雅不足ロック） */
+.cast-status-ribbon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 3px;
+  z-index: 3;
+}
+
+.ribbon-assigned {
+  background: var(--c-amber);
+  color: var(--c-ink);
+}
+
+.ribbon-cooldown {
+  background: #4a3f55;
+  color: #e4d7f5;
+  border: 1px solid #9b59b6;
+}
+
+.ribbon-cost-locked {
+  background: rgba(180, 35, 35, 0.9);
+  color: #fff;
+  border: 1px solid #ff9e9e;
+}
+
+/* ==========================================================================
+   モーダルウィンドウ（夜明け・結果・手引書）
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(8, 9, 14, 0.82);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-backdrop.hidden {
+  display: none;
+}
+
+.modal-card {
+  position: relative;
+  max-width: 540px;
+  width: 100%;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(230, 161, 92, 0.16), transparent 70%),
+    linear-gradient(180deg, #211d24 0%, #14151e 100%);
+  border: 2px solid var(--c-amber);
+  border-radius: 8px;
+  padding: 28px 32px;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+}
+
+.help-modal-card {
+  max-width: 660px;
+  text-align: left;
+}
+
+.modal-watermark {
+  position: absolute;
+  right: 16px;
+  bottom: -20px;
+  font-size: 8rem;
+  font-weight: 800;
+  color: rgba(244, 238, 215, 0.04);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.modal-subtitle {
+  font-size: 0.85rem;
+  color: var(--c-amber);
+  letter-spacing: 0.2em;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--c-washi);
+  letter-spacing: 0.12em;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.modal-body {
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: #e6decb;
+  margin-bottom: 18px;
+}
+
+.help-content ul {
+  margin-top: 10px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.86rem;
+}
+
+.help-content strong {
+  color: var(--c-amber);
+}
+
+.modal-stats-summary {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 22px;
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.38);
+  border-radius: 6px;
+  border: 1px solid rgba(230, 161, 92, 0.25);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   カットイン：おもてなし成功ミニ会話ウィンドウ
+   ========================================================================== */
+.cutin-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background: rgba(8, 9, 14, 0.72);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  cursor: pointer;
+  animation: fadeIn 0.22s ease;
+}
+
+.cutin-overlay.hidden {
+  display: none;
+}
+
+.cutin-banner {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(230, 161, 92, 0.14), transparent 70%),
+    linear-gradient(90deg, rgba(18, 19, 26, 0.96) 0%, rgba(36, 26, 28, 0.98) 50%, rgba(18, 19, 26, 0.96) 100%);
+  border-top: 2px solid var(--c-amber);
+  border-bottom: 2px solid var(--c-amber);
+  border-left: 4px solid var(--c-crimson);
+  border-right: 4px solid var(--c-crimson);
+  border-radius: 6px;
+  padding: 18px 24px 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 28px rgba(230, 161, 92, 0.28);
+  overflow: hidden;
+  animation: cutinSlideIn 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cutinSlideIn {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.75) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+.cutin-bg-kanji {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11rem;
+  font-weight: 800;
+  color: rgba(244, 238, 215, 0.04);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.cutin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgba(230, 161, 92, 0.3);
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.cutin-room-tag {
+  background: rgba(230, 161, 92, 0.16);
+  border: 1px solid var(--c-amber);
+  color: var(--c-washi);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 3px;
+  letter-spacing: 0.12em;
+}
+
+.cutin-title-seal {
+  background: var(--c-crimson);
+  color: var(--c-washi);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  padding: 4px 18px;
+  border: 1px solid rgba(244, 238, 215, 0.7);
+  border-radius: 3px;
+  box-shadow: 0 0 14px var(--c-crimson-glow);
+}
+
+.cutin-reward-badge {
+  color: #ffd57e;
+  font-size: 0.88rem;
+  font-weight: 800;
+  background: rgba(230, 161, 92, 0.15);
+  border: 1px solid rgba(230, 161, 92, 0.45);
+  padding: 3px 12px;
+  border-radius: 3px;
+}
+
+.cutin-stage {
+  display: grid;
+  grid-template-columns: 112px 1fr 112px;
+  gap: 18px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.cutin-actor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.cutin-actor-cast {
+  animation: actorEnterLeft 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cutin-actor-visitor {
+  animation: actorEnterRight 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes actorEnterLeft {
+  0% { opacity: 0; transform: translateX(-28px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes actorEnterRight {
+  0% { opacity: 0; transform: translateX(28px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+.cutin-portrait-frame {
+  width: 96px;
+  height: 116px;
+  border-radius: 6px;
+  border: 2px solid var(--c-amber);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65);
+  background: radial-gradient(circle at 50% 30%, #3a2929, #14151f);
+}
+
+.cutin-portrait-frame img.card-real-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.cutin-portrait-kanji {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--c-washi);
+  text-shadow: 0 0 12px rgba(230, 161, 92, 0.7);
+  z-index: 1;
+  line-height: 1;
+}
+
+.cutin-portrait-caption {
+  font-size: 0.7rem;
+  color: var(--c-amber);
+  margin-top: 4px;
+  z-index: 1;
+}
+
+.cutin-dialogue-box {
+  background:
+    linear-gradient(135deg, rgba(244, 238, 215, 0.97) 0%, rgba(223, 211, 179, 0.97) 100%);
+  color: var(--c-ink);
+  border: 1px solid #b5a482;
+  border-radius: 6px;
+  padding: 12px 16px;
+  box-shadow: inset 0 0 18px rgba(139, 90, 43, 0.12), 0 4px 16px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cutin-speech {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed rgba(34, 30, 29, 0.22);
+}
+
+.cutin-speaker {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.cutin-speech-cast .cutin-speaker {
+  color: #8f1919;
+}
+
+.cutin-speech-visitor .cutin-speaker {
+  color: #2f4f4f;
+}
+
+.cutin-line {
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--c-ink);
+}
+
+.cutin-narration {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--c-ink-muted);
+  font-style: italic;
+}
+
+.cutin-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-cutin-next {
+  background: linear-gradient(135deg, #c92a2a 0%, #8f1919 100%);
+  color: var(--c-washi);
+  border: 1px solid var(--c-amber);
+  border-radius: 4px;
+  padding: 5px 16px;
+  font-family: var(--font-serif);
+  font-size: 0.84rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(201, 42, 42, 0.45);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.btn-cutin-next:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.12);
+}
+
+.btn-cutin-next small {
+  font-weight: 400;
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 1080px) {
+  .top-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+  .rooms-grid {
+    grid-template-columns: 1fr;
+  }
+  .cast-hand {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .cutin-stage {
+    grid-template-columns: 1fr;
+  }
+  .cutin-actor {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .top-bar {
+    grid-template-columns: 1fr;
+  }
+  .cast-hand {
+    grid-template-columns: 1fr;
+  }
+}
+

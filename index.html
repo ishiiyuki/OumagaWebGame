@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>逢曲時 帳場録（おうまがどき ちょうばろく）</title>
+  <!-- Google Fonts: Shippori Mincho -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 背景パーティクル用Canvas（狐火＆彼岸花の花弁） -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- 背景の和柄オーバーレイとヴィネット -->
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <!-- メインゲームコンテナ -->
+  <div class="app-container">
+    
+    <!-- ================= 上部：ステータス＆帳場録（ログ）エリア ================= -->
+    <header class="top-bar">
+      <!-- 旅館タイトル（縦書き風エンブレム＋横書き） -->
+      <div class="title-block">
+        <div class="title-seal">逢曲時</div>
+        <div class="title-text">
+          <span class="subtitle">現世と常世の狭間の宿</span>
+          <h1>逢曲時 帳場録</h1>
+        </div>
+      </div>
+
+      <!-- 夜の進行・フェーズ表示 -->
+      <div class="phase-panel">
+        <div class="night-indicator">
+          <span class="night-label">現在の刻</span>
+          <span id="night-count" class="night-value">第一夜</span>
+          <span id="night-total" class="night-total">/ 全五夜</span>
+        </div>
+        <div class="phase-steps">
+          <span id="phase-dusk" class="phase-step">一、夕暮れ</span>
+          <span class="phase-arrow">▸</span>
+          <span id="phase-oumaga" class="phase-step active">二、逢魔が時</span>
+          <span class="phase-arrow">▸</span>
+          <span id="phase-midnight" class="phase-step">三、夜更け</span>
+        </div>
+      </div>
+
+      <!-- 旅館ステータス（評判・雅） -->
+      <div class="status-panel">
+        <div class="status-item" id="status-reputation">
+          <div class="status-header">
+            <span class="status-icon">🏮</span>
+            <span class="status-name">評判</span>
+            <span id="reputation-num" class="status-num">3</span>
+          </div>
+          <div id="reputation-tokens" class="token-row" aria-label="評判ゲージ"></div>
+        </div>
+
+        <div class="status-item" id="status-spirit">
+          <div class="status-header">
+            <span class="status-icon">🪭</span>
+            <span class="status-name">雅</span>
+            <span id="spirit-num" class="status-num">4</span>
+          </div>
+          <div id="spirit-tokens" class="token-row" aria-label="雅ゲージ"></div>
+        </div>
+      </div>
+
+      <!-- 帳場録（イベントログ） -->
+      <div class="log-panel">
+        <div class="log-header">
+          <span>📜 帳場録</span>
+          <button id="btn-help" class="btn-sub" type="button" title="遊び方を確認">手引書</button>
+        </div>
+        <div id="game-log" class="log-entries" role="log" aria-live="polite"></div>
+      </div>
+    </header>
+
+    <!-- ================= 中央：客室エリア（3部屋） ================= -->
+    <main class="rooms-section">
+      <div class="section-heading">
+        <span class="heading-line"></span>
+        <h2>お座敷一覧 <small>― 客人の所望する芸（話術・舞踊・座興）を見極め、キャストを配置せよ ―</small></h2>
+        <span class="heading-line"></span>
+      </div>
+
+      <div id="rooms-grid" class="rooms-grid">
+        <!-- JSで3部屋（大広間・舞台 / 離れの小座敷 / 月見の宴席）を動的生成 -->
+      </div>
+    </main>
+
+    <!-- ================= 下部：手札（キャスト待機枠）＆操作エリア ================= -->
+    <footer class="hand-section">
+      <div class="hand-header">
+        <div class="hand-title-group">
+          <h3>帳場待機キャスト（手札 4枚）</h3>
+          <span id="deck-status-badge" class="deck-status-badge">山札控え：4名</span>
+          <span id="selection-hint" class="selection-hint">
+            カードを客室へドラッグ＆ドロップ、またはクリックで選択してお座敷へ配置してください（最大3名）
+          </span>
+        </div>
+        <div class="action-buttons">
+          <button id="btn-bell-redraw" class="btn-bell" type="button" title="1夜に1回、雅を1消費して未配置の手札を山札から引き直します">
+            🔔 呼び鈴（手札入替 / 雅-1）
+          </button>
+          <button id="btn-clear-assign" class="btn-secondary" type="button">配置を戻す</button>
+          <button id="btn-resolve-night" class="btn-primary" type="button">
+            <span class="btn-lantern">🕯️</span> 夜を進める（お座敷判定）
+          </button>
+        </div>
+      </div>
+
+      <div id="cast-hand" class="cast-hand">
+        <!-- JSで4枚のキャストカードを動的生成 -->
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ================= カットイン：おもてなし成功ミニ会話ウィンドウ ================= -->
+  <div id="cutin-overlay" class="cutin-overlay hidden" role="dialog" aria-modal="true" aria-label="おもてなし会話カットイン">
+    <div class="cutin-banner">
+      <div class="cutin-bg-kanji" id="cutin-bg-kanji" aria-hidden="true">饗</div>
+
+      <!-- 上部ヘッダー（客室名・成功朱印・獲得報酬） -->
+      <div class="cutin-header">
+        <span id="cutin-room-tag" class="cutin-room-tag">大広間・舞台</span>
+        <span class="cutin-title-seal">おもてなし成功 ― お座敷が華やいだ ―</span>
+        <span id="cutin-reward-badge" class="cutin-reward-badge">評判+1</span>
+      </div>
+
+      <!-- 会話メイン領域（左：キャスト / 中央：2〜3行の掛け合い / 右：宿泊客） -->
+      <div class="cutin-stage">
+        <div id="cutin-cast-box" class="cutin-actor cutin-actor-cast">
+          <!-- JSでキャスト立ち絵プレースホルダーまたはimgを挿入 -->
+        </div>
+
+        <div class="cutin-dialogue-box">
+          <div class="cutin-speech cutin-speech-cast">
+            <span id="cutin-cast-speaker" class="cutin-speaker">筆頭・常世</span>
+            <p id="cutin-cast-line" class="cutin-line"></p>
+          </div>
+          <div class="cutin-speech cutin-speech-visitor">
+            <span id="cutin-visitor-speaker" class="cutin-speaker">迷い込んだ旅人</span>
+            <p id="cutin-visitor-line" class="cutin-line"></p>
+          </div>
+          <p id="cutin-narration" class="cutin-narration"></p>
+        </div>
+
+        <div id="cutin-visitor-box" class="cutin-actor cutin-actor-visitor">
+          <!-- JSで来訪者プレースホルダーまたはimgを挿入 -->
+        </div>
+      </div>
+
+      <div class="cutin-footer">
+        <button id="btn-cutin-next" class="btn-cutin-next" type="button">次へ ▸ <small>（クリックで進む）</small></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= モーダル：夜明け／エンディング／ゲームオーバー ================= -->
+  <div id="result-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div id="modal-watermark" class="modal-watermark" aria-hidden="true">暁</div>
+      <p id="modal-subtitle" class="modal-subtitle">― 夜明け ―</p>
+      <h2 id="modal-title" class="modal-title">第一夜 明け</h2>
+      <div id="modal-body" class="modal-body"></div>
+      <div id="modal-stats-summary" class="modal-stats-summary"></div>
+      <div class="modal-actions">
+        <button id="btn-modal-next" class="btn-primary" type="button">次の夜へ進む</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= モーダル：手引書（遊び方） ================= -->
+  <div id="help-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card help-modal-card">
+      <div class="modal-watermark" aria-hidden="true">帳</div>
+      <p class="modal-subtitle">― 帳場衆の心得 ―</p>
+      <h2 class="modal-title">彼岸旅館『逢曲時』手引書</h2>
+      <div class="modal-body help-content">
+        <p>ここは現世と常世の狭間に佇む彼岸旅館<strong>「逢曲時（おうまがどき）」</strong>。<br>あなたは帳場預かりとして、<strong>全五夜</strong>にわたりお座敷へ訪れる客人たちを粋にもてなし、宿の<strong>「🏮 評判（初期3／最大5）」</strong>と<strong>「🪭 雅（初期4／最大5）」</strong>を守り抜かねばなりません。</p>
+        <ul>
+          <li><strong>一、夕暮れ（来訪＆ドロー）：</strong>「大広間・舞台」「離れの小座敷」「月見の宴席」の3部屋に客人が訪れます。客人はそれぞれ<strong>💬【話術】・🪭【舞踊】・🍶【座興】</strong>の要求値（後半の夜は2つ同時に求める複合要求や要求5も出現）を持っています。<br>
+          また、全8名のキャスト山札からランダムで<strong>4名</strong>が手札として配られます。</li>
+          <li><strong>二、逢魔が時（配置＆呼び鈴）：</strong>手札のキャストから各お座敷に1名ずつ配置します。<br>
+          ※<strong>「🔔 呼び鈴（手札入替）」：</strong>1夜に1回だけ<strong>「雅」を1消費</strong>して、未配置の手札をすべて山札に戻し、新しく引き直すことができます。</li>
+          <li><strong>三、【女将の威光】筆頭・常世と個性豊かなキャスト：</strong><br>
+          ・<strong>筆頭・常世（話4/舞4/興4）：</strong>あらゆる芸事に通じる最高峰の切り札ですが、格式が高いため<strong>お座敷へ配置する際に「雅」を1消費</strong>します（配置を外せば「雅」は返却されます。現在の「雅」が1の時は配置不可）。<br>
+          ・他にも<strong>舞姫・ハルカ（舞4）</strong>、<strong>粋人・ならく（興4）</strong>、<strong>見習い・まりん（話4）</strong>のスペシャリストや、<strong>看板娘・月下香（成功時評判+1）</strong>、<strong>歌姫・るちゃ（成功時雅+1）</strong>、<strong>姉御肌・たまも（失敗ペナルティ1軽減）</strong>、<strong>帳場頭・にゃる（部屋ボーナスを+3にする）</strong>が活躍します。</li>
+          <li><strong>四、夜更け〜夜明け：</strong>要求値を満たせば<strong>【おもてなし成功（お座敷が華やいだ）】</strong>となり会話カットインが発生！ 不足や未配置の場合は<strong>【不興を買ってしまった（座が白けてしまった）】</strong>となります。「評判」または「雅」が <strong>0</strong> になるとゲームオーバー。第五夜を乗り切ればクリアです！</li>
+        </ul>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-close-help" class="btn-primary" type="button">帳場へ戻る</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
