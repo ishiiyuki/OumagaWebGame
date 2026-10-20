@@ -197,7 +197,7 @@
 
     const unplacedHandIds = state.handCastIds.filter((id) => !assignedIds.has(id));
     if (unplacedHandIds.length === 0) {
-      addLog("すべての手札がお座敷へ配置されているため、入れ替える待機キャストがいません。");
+      addLog("すべての手札がお座敷へ配置されているため、入れ替える待機中の誘魅（いざなみ）がいません。");
       return;
     }
 
@@ -263,7 +263,7 @@
       .map((c) => c.name);
     const restText = restingNames.length > 0 ? `（今宵休み：${restingNames.join("・")}）` : "";
 
-    addLog(`―― 【${nightLabel}・夕暮れ】三つのお座敷に客人が見えられ、待機キャスト4名が帳場へ揃いました。${restText}`);
+    addLog(`―― 【${nightLabel}・夕暮れ】三つのお座敷に客人が見えられ、待機の誘魅（いざなみ）4名が帳場へ揃いました。${restText}`);
 
     updateStatusUI();
     renderAll();
@@ -866,8 +866,8 @@
           <div class="slot-empty-prompt">
             ${
               state.selectedCastId
-                ? "▸ ここをクリックして選択中のキャストを配置 ◂"
-                : "ここにお座敷担当キャストを配置（ドラッグ＆ドロップ または クリック）"
+                ? "▸ ここをクリックして選択中の誘魅（いざなみ）を配置 ◂"
+                : "ここにお座敷担当の誘魅（いざなみ）を配置（ドラッグ＆ドロップ または クリック）"
             }
             <span>※未配置のまま夜を進めると【不興（座が白ける）】となります</span>
           </div>
@@ -1181,7 +1181,7 @@
 
     dom.modalBody.innerHTML = `
       東の空が白み始め、お座敷の客人たちは満足げに夜明けの道へ帰っていきました。<br>
-      次の夕暮れには、また新たな待機キャスト4名が帳場へ揃います。${restNote}${difficultyNote}
+      次の夕暮れには、また新たな待機の誘魅（いざなみ）4名が帳場へ揃います。${restNote}${difficultyNote}
     `;
 
     dom.modalStatsSummary.innerHTML = `
@@ -1206,7 +1206,7 @@
 
     dom.modalBody.innerHTML = `
       五夜にわたるお座敷を見事に切り盛りし、宿には清々しい朝日が差し込みました。<br>
-      粋な歓談、華やかな舞踊、賑やかな座興――八名の仲間とあなたの采配により、「逢曲時」は現世と常世で随一の名旅館として語り継がれることでしょう！<br>
+      粋な歓談、華やかな舞踊、賑やかな座興――八名の誘魅（いざなみ）とあなたの采配により、「逢曲時」は現世と常世で随一の名旅館として語り継がれることでしょう！<br>
       <strong>― 全五夜おもてなし完遂、誠にお見事でした ―</strong>
     `;
 
@@ -1238,7 +1238,7 @@
     dom.modalBody.innerHTML = `
       ${reason}<br>
       行灯の火は消え、帳場録はここで途絶えてしまいました。<br>
-      お座敷ごとのボーナスや「帳場の呼び鈴」、各キャストの特技を活かして再び挑戦してみてください。
+      お座敷ごとのボーナスや「帳場の呼び鈴」、各誘魅（いざなみ）の特技を活かして再び挑戦してみてください。
     `;
 
     dom.modalStatsSummary.innerHTML = `
