@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261021_2">
+  <link rel="stylesheet" href="style.css?v=20261022_1">
 </head>
 <body>
   <!-- 共通SVGシンボル定義：女将・常世の家紋「八つ槌車（やつづちぐるま）」 -->
@@ -283,7 +283,7 @@
     </div>
   </div>
 
-  <!-- ================= モーダル：夜明け／エンディング／ゲームオーバー ================= -->
+  <!-- ================= モーダル：夜明け（各夜終了時） ================= -->
   <div id="result-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div id="modal-watermark" class="modal-watermark" aria-hidden="true">暁</div>
@@ -294,6 +294,97 @@
       <div class="modal-actions">
         <button id="btn-modal-next" class="btn-primary" type="button">次の夜へ進む</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ================= 豪華リザルト画面（帳場日報：エンディング3分岐） ================= -->
+  <div id="ending-modal" class="ending-backdrop hidden" role="dialog" aria-modal="true" aria-label="帳場日報・エンディングリザルト">
+    <!-- エンディング到達演出エフェクトレイヤー（金紙吹雪・狐火・行灯消灯） -->
+    <div id="ending-fx-layer" class="ending-fx-layer" aria-hidden="true"></div>
+
+    <!-- 和紙の巻物＆豪華木札フレーム -->
+    <div id="ending-scroll-card" class="ending-scroll-card ending-rank-true">
+      <div class="scroll-roller scroll-roller-top" aria-hidden="true"></div>
+
+      <div class="ending-scroll-inner">
+        <div id="ending-watermark" class="ending-watermark" aria-hidden="true">極</div>
+
+        <!-- 上部：帳場日報ヘッダー＆到達エンディングタイトル -->
+        <header class="ending-header">
+          <div class="ending-header-meta">
+            <span class="ending-ledger-tag">
+              <svg class="kamon-svg ending-kamon-inline" width="18" height="18"><use href="#kamon-yatsuduchiguruma"></use></svg>
+              彼岸旅館『逢曲時』帳場日報
+            </span>
+            <span id="ending-rank-badge" class="ending-rank-badge">極上の夜（トゥルーエンド）</span>
+          </div>
+
+          <div class="ending-title-row">
+            <span id="ending-seal-stamp" class="ending-seal-stamp">千客万来</span>
+            <h2 id="ending-title" class="ending-title">『千客万来・極上の逢曲時』</h2>
+          </div>
+
+          <p id="ending-description" class="ending-description"></p>
+        </header>
+
+        <!-- 中段：木札風最終スコア3種サマリー（帳場総括） -->
+        <section class="ending-score-board" aria-label="最終スコア">
+          <div class="wooden-plaque plaque-reputation">
+            <span class="plaque-nail plaque-nail-tl" aria-hidden="true"></span>
+            <span class="plaque-nail plaque-nail-tr" aria-hidden="true"></span>
+            <span class="plaque-label">最終評判</span>
+            <strong id="ending-score-rep" class="plaque-value">★×5</strong>
+            <span id="ending-score-rep-stars" class="plaque-sub-icons" aria-hidden="true">★★★★★</span>
+          </div>
+
+          <div class="wooden-plaque plaque-spirit">
+            <span class="plaque-nail plaque-nail-tl" aria-hidden="true"></span>
+            <span class="plaque-nail plaque-nail-tr" aria-hidden="true"></span>
+            <span class="plaque-label">最終雅</span>
+            <strong id="ending-score-spirit" class="plaque-value">◆×5</strong>
+            <span id="ending-score-spirit-gems" class="plaque-sub-icons" aria-hidden="true">◆◆◆◆◆</span>
+          </div>
+
+          <div class="wooden-plaque plaque-rooms">
+            <span class="plaque-nail plaque-nail-tl" aria-hidden="true"></span>
+            <span class="plaque-nail plaque-nail-tr" aria-hidden="true"></span>
+            <span class="plaque-label">おもてなし成功数</span>
+            <strong id="ending-score-rooms" class="plaque-value">15 / 15室</strong>
+            <span id="ending-score-rooms-sub" class="plaque-sub-text">全五夜 帳場総括</span>
+          </div>
+        </section>
+
+        <!-- 下段：今宵の殊勲（MVPキャスト表示枠＆一言ネギライ台詞吹き出し） -->
+        <section class="ending-mvp-section" aria-label="今宵の殊勲">
+          <div id="ending-mvp-card" class="ending-mvp-card">
+            <!-- JSでMVPキャストの大型カード画像を挿入 -->
+          </div>
+
+          <div class="ending-mvp-details">
+            <div class="ending-mvp-heading-wrap">
+              <span class="ending-mvp-crown">👑 今宵の殊勲（MVPキャスト）</span>
+              <h3 id="ending-mvp-title" class="ending-mvp-title">今宵の殊勲：女将・常世（おもてなし成功 5回）</h3>
+            </div>
+
+            <div class="ending-speech-bubble">
+              <span id="ending-mvp-speaker" class="ending-speech-speaker">【女将・常世からの労い】</span>
+              <p id="ending-mvp-quote" class="ending-speech-text"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- アクションボタン（リトライ ＆ Xシェア） -->
+        <footer class="ending-actions">
+          <button id="btn-ending-retry" class="btn-primary btn-ending-retry" type="button">
+            🏮 もう一度帳場に立つ（リトライ）
+          </button>
+          <button id="btn-ending-share" class="btn-x-share" type="button">
+            <span class="x-logo" aria-hidden="true">𝕏</span> 結果をX（Twitter）で呟く
+          </button>
+        </footer>
+      </div>
+
+      <div class="scroll-roller scroll-roller-bottom" aria-hidden="true"></div>
     </div>
   </div>
 
@@ -322,7 +413,14 @@
     </div>
   </div>
 
-  <script src="data.js?v=20261021_2"></script>
-  <script src="app.js?v=20261021_2"></script>
+  <!-- ================= デバッグ確認用ショートカット（開発用・右下隅） ================= -->
+  <div id="debug-ending-bar" class="debug-ending-bar" aria-label="デバッグ確認用ショートカット">
+    <button id="btn-debug-true" class="btn-debug-end" type="button" data-debug-ending="true">[Debug: True]</button>
+    <button id="btn-debug-normal" class="btn-debug-end" type="button" data-debug-ending="normal">[Debug: Normal]</button>
+    <button id="btn-debug-bad" class="btn-debug-end" type="button" data-debug-ending="bad">[Debug: Bad]</button>
+  </div>
+
+  <script src="data.js?v=20261022_1"></script>
+  <script src="app.js?v=20261022_1"></script>
 </body>
 </html>
