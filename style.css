@@ -121,7 +121,7 @@ html, body {
 .app-container {
   position: relative;
   z-index: 2;
-  max-width: 1400px;
+  max-width: 1720px;
   margin: 0 auto;
   padding: 8px 18px 12px;
   min-height: 100vh;
@@ -924,11 +924,11 @@ html, body {
   cursor: not-allowed;
 }
 
-/* 誘魅カード4枚グリッド */
+/* 誘魅カード5枚グリッド（カードサイズ感を維持したまま5枚横並び） */
 .cast-hand {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
 }
 
 /* 大型キャラクター立ち絵仕立ての誘魅カード */
@@ -1163,11 +1163,11 @@ html, body {
   background: rgba(8, 8, 12, 0.82);
   border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: 4px;
-  padding: 2px 6px;
+  padding: 2px 5px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.72rem;
+  gap: 3px;
+  font-size: 0.7rem;
 }
 
 .cast-stat-pill.specialty {

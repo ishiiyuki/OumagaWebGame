@@ -18,7 +18,7 @@
     reputation: DATA.config.initialReputation, // 評判
     spirit: DATA.config.initialSpirit,         // 雅（みやび）
     selectedCastId: null,     // クリック選択中の誘魅ID
-    handCastIds: [],          // 今夜の手札として配られた4名の誘魅ID配列
+    handCastIds: [],          // 今夜の手札として配られた5名の誘魅ID配列
     bellUsedThisNight: false, // 今夜「帳場の呼び鈴（手札入替）」を使用したか
     roomState: {},            // { [roomId]: { visitor, assignedCastId, result } }
     castCooldowns: {},        // { [castId]: remainingTurns }（1ターン休み管理）
@@ -178,9 +178,28 @@
 
   /**
    * 夜の進行度に応じた重み付けで来訪者（迷い人）を3部屋分抽選する
+   * ・第一夜〜第二夜（序盤）：要求値2〜3の単一要求（early）のみ出現（要求4以上・複合要求は出現しない）
+   * ・第三夜（中盤）：要求値4（mid）や複合要求（3＆3）が解禁（要求値5の難客はまだ出現しない）
+   * ・第四夜〜第五夜（終盤）：要求値5の難客も含めすべて出現
    */
   function drawVisitorsForNight(nightNumber) {
-    const candidates = [...DATA.visitors];
+    const candidates = DATA.visitors.filter((v) => {
+      const reqs = getVisitorRequirements(v);
+      const maxReq = Math.max(...reqs.map((r) => r.value || 0));
+      const isComposite = reqs.length > 1;
+      const tier = v.tier || "early";
+
+      // 序盤（第一夜・第二夜）は要求4以上・複合要求・mid/highティアを完全除外
+      if (nightNumber <= 2) {
+        return tier === "early" && maxReq <= 3 && !isComposite;
+      }
+      // 中盤（第三夜）は要求5の大物客を除外
+      if (nightNumber === 3) {
+        return maxReq <= 4;
+      }
+      return true;
+    });
+
     const selected = [];
 
     for (let i = 0; i < DATA.rooms.length; i++) {
@@ -189,10 +208,12 @@
       const weights = candidates.map((v) => {
         const tier = v.tier || "early";
         if (nightNumber <= 2) {
-          if (tier === "early") return 6;
-          if (tier === "mid") return 3;
-          return 0.6; // high
-        } else if (nightNumber <= 4) {
+          return 1; // 序盤はearlyのみ均等抽選
+        } else if (nightNumber === 3) {
+          if (tier === "early") return 3.5;
+          if (tier === "mid") return 4;
+          return 2.5; // 複合要求（3&3）
+        } else if (nightNumber === 4) {
           if (tier === "early") return 2.5;
           if (tier === "mid") return 4;
           return 4.5; // high
@@ -223,12 +244,12 @@
   }
 
   /**
-   * 山札（全8名）から「1ターン休み」の誘魅を除外し、ランダムで手札（4名）をドローする
+   * 山札（全10名）から「1ターン休み」の誘魅を除外し、ランダムで手札（5名）をドローする
    */
   function drawInitialHand() {
     const availablePool = DATA.casts.filter((c) => (state.castCooldowns[c.id] || 0) <= 0);
     shuffleArray(availablePool);
-    const count = Math.min(DATA.config.handSize || 4, availablePool.length);
+    const count = Math.min(DATA.config.handSize || 5, availablePool.length);
     state.handCastIds = availablePool.slice(0, count).map((c) => c.id);
   }
 
@@ -275,7 +296,7 @@
     shuffleArray(returnedPool);
 
     const combinedPool = [...outsideHandPool, ...returnedPool];
-    const neededCount = (DATA.config.handSize || 4) - assignedIds.size;
+    const neededCount = (DATA.config.handSize || 5) - assignedIds.size;
     const newlyDrawnIds = combinedPool.slice(0, neededCount);
 
     state.handCastIds = [...Array.from(assignedIds), ...newlyDrawnIds];
@@ -311,7 +332,7 @@
       };
     });
 
-    // 2. 山札（休み除外）からランダムで4名をドロー
+    // 2. 山札（休み除外）からランダムで5名をドロー
     drawInitialHand();
 
     const nightLabel = NIGHT_LABELS[nightNumber - 1] || `第${nightNumber}夜`;
@@ -320,7 +341,7 @@
       .map((c) => c.name);
     const restText = restingNames.length > 0 ? `（今宵休み：${restingNames.join("・")}）` : "";
 
-    addLog(`―― 【${nightLabel}・宵の口】現世から迷い込んだ三組の客人が見えられ、待機の誘魅巫女4名が帳場へ揃いました。${restText}`);
+    addLog(`―― 【${nightLabel}・宵の口】現世から迷い込んだ三組の客人が見えられ、待機の誘魅巫女${state.handCastIds.length}名が帳場へ揃いました。${restText}`);
 
     updateStatusUI();
     renderAll();
@@ -339,6 +360,15 @@
 
   function evaluateAssignment(room, visitor, cast) {
     const reqs = getVisitorRequirements(visitor);
+    const passiveNotes = [];
+
+    // 他のお座敷に「古参女中・らぼ」が配置されているか判定
+    const isLaboInOtherRoom = Object.entries(state.roomState).some(([rId, rSt]) => {
+      if (rId === room.id || !rSt?.assignedCastId) return false;
+      const otherCast = DATA.casts.find((c) => c.id === rSt.assignedCastId);
+      return otherCast?.passiveType === "veteran_maid";
+    });
+    let laboSupportUsed = false;
 
     const checks = reqs.map((req) => {
       const statKey = req.stat;
@@ -372,6 +402,15 @@
             affinityBonus = room.affinityBonusValue || 1;
           }
         }
+      } else if (cast.passiveType === "all_rounder_maid") {
+        // 女中・四葩【そつなき給仕】：お座敷の得意属性以外の能力も+1
+        affinityBonus += cast.passiveValue || 1;
+      }
+
+      // 女中・らぼ【古参の目配り】：他の座敷にらぼが配置中なら【話術】+1
+      if (statKey === "talk" && isLaboInOtherRoom) {
+        affinityBonus += 1;
+        laboSupportUsed = true;
       }
 
       const totalVal = baseVal + roomBonus + affinityBonus;
@@ -390,11 +429,14 @@
       };
     });
 
+    if (cast && laboSupportUsed) {
+      passiveNotes.push("らぼ目配り：話術+1");
+    }
+
     const isSuccess = Boolean(cast) && checks.every((c) => c.passed);
 
     let deltaRep = isSuccess ? (visitor.reward.reputation || 0) : (visitor.penalty.reputation || 0);
     let deltaSpi = isSuccess ? (visitor.reward.spirit || 0) : (visitor.penalty.spirit || 0);
-    const passiveNotes = [];
 
     if (cast) {
       if (isSuccess) {
@@ -406,6 +448,18 @@
           const addSpi = cast.passiveValue || 1;
           deltaSpi += addSpi;
           passiveNotes.push(`${cast.name}効果：雅+${addSpi}`);
+        } else if (cast.passiveType === "veteran_maid") {
+          // 女中・らぼ【古参の目配り】：成功時、3以下の『評判』か『雅』のうち低い方を+1回復
+          const addVal = cast.passiveValue || 1;
+          if (state.reputation <= 3 || state.spirit <= 3) {
+            if (state.reputation <= state.spirit && state.reputation <= 3) {
+              deltaRep += addVal;
+              passiveNotes.push(`${cast.name}効果：評判+${addVal}`);
+            } else if (state.spirit <= 3) {
+              deltaSpi += addVal;
+              passiveNotes.push(`${cast.name}効果：雅+${addVal}`);
+            }
+          }
         }
       } else {
         if (cast.passiveType === "reduce_penalty_on_fail") {
@@ -964,7 +1018,7 @@
   }
 
   /**
-   * 下部の手札（山札からドローされた誘魅4名）を描画
+   * 下部の手札（山札からドローされた誘魅5名）を描画
    */
   function renderCastHand() {
     dom.castHand.innerHTML = "";
@@ -1155,7 +1209,7 @@
 
     dom.modalBody.innerHTML = `
       神楽の調べに魂を鎮められた迷い人たちは、店外入口から竹林を割くように現世へ続く坂<strong>“黄泉平坂（よもつひらさか）”</strong>を登り、無事に現世へと還っていきました。<br>
-      次の宵には、また新たな待機の誘魅巫女（いざなみのみこ）4名が帳場へ揃います。${restNote}${difficultyNote}
+      次の宵には、また新たな待機の誘魅巫女（いざなみのみこ）${DATA.config.handSize || 5}名が帳場へ揃います。${restNote}${difficultyNote}
     `;
 
     dom.modalStatsSummary.innerHTML = `
