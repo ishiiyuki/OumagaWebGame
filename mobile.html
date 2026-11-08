@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>逢曲時 帳場録（スマホ版） | 彼岸旅館「逢曲時」おうまがとき</title>
+  <!-- Google Fonts: Cinzel, Noto Serif JP, Shippori Mincho -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="mobile.css?v=20261109_4">
+</head>
+<body>
+  <!-- BGMオーディオ要素（タイトル画面から常時ループ再生） -->
+  <audio id="bgm-player" src="BGM/久遠.mp3" loop preload="auto"></audio>
+
+  <!-- 共通SVGシンボル定義：女将・常世の家紋「八つ槌車（やつづちぐるま）」 -->
+  <svg width="0" height="0" style="position:absolute; visibility:hidden;" aria-hidden="true">
+    <defs>
+      <symbol id="kamon-yatsuduchiguruma" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="2.5" opacity="0.85"/>
+        <circle cx="50" cy="50" r="39" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.5"/>
+        <g stroke="currentColor" fill="currentColor">
+          <g transform="rotate(0 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(45 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(90 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(135 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(180 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(225 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(270 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+          <g transform="rotate(315 50 50)">
+            <rect x="48.6" y="18" width="2.8" height="22" rx="1"/>
+            <rect x="41.5" y="10" width="17" height="9" rx="2.5"/>
+          </g>
+        </g>
+        <circle cx="50" cy="50" r="12" fill="#0d0b0e" stroke="currentColor" stroke-width="3"/>
+        <circle cx="50" cy="50" r="4.5" fill="currentColor"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- 背景パーティクル用Canvas -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <!-- ================= 1. タイトル画面オーバーレイ（スマホ縦画面最適化） ================= -->
+  <section id="title-screen" class="screen-overlay">
+    <div class="title-screen-card">
+      <div class="title-screen-watermark" aria-hidden="true">逢曲時</div>
+
+      <div class="title-emblem-wrap">
+        <div class="title-kamon-crest" title="女将・常世の家紋『八つ槌車』">
+          <svg class="kamon-svg" width="52" height="52"><use href="#kamon-yatsuduchiguruma"></use></svg>
+        </div>
+        <span class="title-kicker">彼岸旅館「逢曲時」― 神楽おもてなしカードゲーム</span>
+        <div class="title-main-row">
+          <div class="title-large-seal">逢曲時</div>
+          <h1 class="title-main-logo">逢曲時 帳場録<span class="title-reading">― おうまがとき ちょうばろく ―</span></h1>
+        </div>
+      </div>
+
+      <p class="title-catchphrase">
+        現世と常世の狭間にある死者の店<strong>「逢曲時（おうまがとき）」</strong>。<br>
+        迷い込んだ人間達を<strong>誘魅巫女（いざなみのみこ）</strong>たちの神楽――<br>
+        <strong>【話術】【舞踊】【座興】</strong>でもてなして魂を鎮め、<br>
+        <strong>“黄泉平坂（よもつひらさか）”</strong>より現世へ送り還しましょう。
+      </p>
+
+      <div class="title-actions">
+        <button id="btn-title-start" class="btn-primary btn-title-large" type="button">
+          🏮 暖簾をくぐる（手引書へ）
+        </button>
+        <a id="btn-title-world" class="btn-secondary btn-title-sub" href="https://oumagatoki.pages.dev/#top" target="_blank" rel="noopener noreferrer">
+          📜 世界観（公式サイトへ）
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 2. ゲーム開始前の遊び方説明画面 ================= -->
+  <section id="intro-screen" class="screen-overlay hidden" role="dialog" aria-modal="true" aria-label="遊び方説明">
+    <div class="intro-screen-card">
+      <div class="modal-watermark" aria-hidden="true">神楽</div>
+      <p class="modal-subtitle">― 開帳前の手引書（スマホ版） ―</p>
+      <h2 class="modal-title">お座敷と神楽の心得</h2>
+
+      <div class="intro-grid">
+        <div class="intro-step-box">
+          <div class="intro-step-num">壱</div>
+          <h3>宿の「評判」と「雅」を守る</h3>
+          <p>
+            <strong>「🏮 評判（初期3）」</strong>と<strong>「🪭 雅（初期4）」</strong>のどちらか1つでも <strong>0</strong> になると帳場閉鎖。<strong>全五夜</strong>完遂でクリア！
+          </p>
+        </div>
+
+        <div class="intro-step-box">
+          <div class="intro-step-num">弐</div>
+          <h3>2タップで簡単お座敷配置</h3>
+          <p>
+            ①下部の手札を<strong>横スワイプ</strong>して誘魅を<strong>タップ選択</strong> → ②中央のお座敷を<strong>タップして配置</strong>！
+          </p>
+        </div>
+
+        <div class="intro-step-box">
+          <div class="intro-step-num">参</div>
+          <h3>山札10名から毎夜5枚ドロー＆呼び鈴</h3>
+          <p>
+            全10名の山札から毎夜<strong>5名</strong>が手札に配られます。1夜1回<strong>「🔔 呼び鈴（雅-1）」</strong>で未配置の手札を引き直せます。
+          </p>
+        </div>
+
+        <div class="intro-step-box">
+          <div class="intro-step-num">肆</div>
+          <h3>座敷ボーナスと切り札「女将・常世」</h3>
+          <p>
+            各お座敷には得意属性<strong>+1〜+3</strong>のボーナスあり。全能力4の<strong>「女将・常世」</strong>は配置時に<strong>雅を1消費</strong>する切り札です。
+          </p>
+        </div>
+      </div>
+
+      <div class="intro-actions">
+        <button id="btn-intro-play" class="btn-primary btn-title-large" type="button">
+          🕯️ 帳場を開く（第一夜を開始）
+        </button>
+        <button id="btn-intro-back" class="btn-secondary" type="button">◂ タイトルへ戻る</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= スマホ版メインゲームコンテナ ================= -->
+  <div class="mobile-app-container">
+    <!-- 上部：2段スリムヘッダー -->
+    <header class="mobile-top-bar">
+      <div class="mobile-top-row1">
+        <div class="mobile-brand">
+          <div class="header-kamon">
+            <svg class="kamon-svg" width="22" height="22"><use href="#kamon-yatsuduchiguruma"></use></svg>
+          </div>
+          <h1 class="mobile-title">逢曲時</h1>
+          <div class="night-indicator">
+            <span id="night-count" class="night-value">第一夜</span>
+            <span id="night-total" class="night-total">/ 全五夜</span>
+          </div>
+        </div>
+
+        <!-- 評判・雅コンパクト表示 -->
+        <div class="mobile-status-group">
+          <div class="status-item" id="status-reputation">
+            <span class="status-icon">🏮</span>
+            <span class="status-name">評判</span>
+            <span id="reputation-num" class="status-num">3</span>
+            <div id="reputation-tokens" class="token-row" aria-hidden="true"></div>
+          </div>
+          <div class="status-item" id="status-spirit">
+            <span class="status-icon">🪭</span>
+            <span class="status-name">雅</span>
+            <span id="spirit-num" class="status-num">4</span>
+            <div id="spirit-tokens" class="token-row" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <!-- サブボタン -->
+        <div class="mobile-sub-btns">
+          <button id="btn-bgm-toggle" class="btn-sub" type="button" title="BGM切替">🔊 BGM</button>
+          <button id="btn-help" class="btn-sub" type="button" title="手引書">手引</button>
+          <a id="btn-world" class="btn-sub" href="https://oumagatoki.pages.dev/#top" target="_blank" rel="noopener noreferrer">世界観</a>
+        </div>
+      </div>
+
+      <!-- 旧キャッシュ互換用非表示要素 -->
+      <div style="display:none;" aria-hidden="true">
+        <span id="phase-dusk"></span>
+        <span id="phase-oumaga"></span>
+        <span id="phase-midnight"></span>
+      </div>
+
+      <!-- 2段目：1行通知ログ -->
+      <div class="mobile-log-bar">
+        <div id="game-log" class="log-entries" role="log" aria-live="polite"></div>
+      </div>
+    </header>
+
+    <!-- 中央：3つのお座敷エリア（スマホ縦画面で見渡せるスリム3段リスト） -->
+    <main class="mobile-rooms-section">
+      <div id="rooms-grid" class="rooms-grid">
+        <!-- JSで3部屋を動的生成 -->
+      </div>
+    </main>
+
+    <!-- 下部：ボトムドック（横スワイプ手札5枚カルーセル＋操作ボタン） -->
+    <footer class="mobile-hand-dock">
+      <div class="mobile-hand-bar">
+        <div class="mobile-hand-meta">
+          <span class="hand-label">待機中の誘魅 <small>（横スワイプ）</small></span>
+          <span id="deck-status-badge" class="deck-status-badge">控え：5名</span>
+        </div>
+        <span id="selection-hint" class="selection-hint">カードをタップして選択</span>
+      </div>
+
+      <!-- 横スクロール手札カルーセル -->
+      <div id="cast-hand" class="cast-hand">
+        <!-- JSで5枚の誘魅カードを動的生成 -->
+      </div>
+
+      <!-- 親指で押しやすい下部アクションバー -->
+      <div class="mobile-action-bar">
+        <button id="btn-bell-redraw" class="btn-bell" type="button">
+          🔔 呼び鈴（雅-1）
+        </button>
+        <button id="btn-clear-assign" class="btn-secondary" type="button">戻す</button>
+        <button id="btn-resolve-night" class="btn-primary" type="button">
+          🕯️ 神楽を奏する
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ================= カットイン：おもてなし成功ミニ会話ウィンドウ ================= -->
+  <div id="cutin-overlay" class="cutin-overlay hidden" role="dialog" aria-modal="true" aria-label="おもてなし会話カットイン">
+    <div class="cutin-banner">
+      <div class="cutin-bg-kanji" id="cutin-bg-kanji" aria-hidden="true">還</div>
+
+      <div class="cutin-header">
+        <span id="cutin-room-tag" class="cutin-room-tag">大広間・神楽舞台</span>
+        <span class="cutin-title-seal">神楽成就 ― 黄泉平坂より現世へ還る ―</span>
+        <span id="cutin-reward-badge" class="cutin-reward-badge">評判+1</span>
+      </div>
+
+      <div class="cutin-stage">
+        <div id="cutin-cast-box" class="cutin-actor cutin-actor-cast"></div>
+        <div class="cutin-dialogue-box">
+          <div class="cutin-speech cutin-speech-cast">
+            <span id="cutin-cast-speaker" class="cutin-speaker">女将・常世</span>
+            <p id="cutin-cast-line" class="cutin-line"></p>
+          </div>
+          <div class="cutin-speech cutin-speech-visitor">
+            <span id="cutin-visitor-speaker" class="cutin-speaker">夕霧に迷い込んだ旅人</span>
+            <p id="cutin-visitor-line" class="cutin-line"></p>
+          </div>
+          <p id="cutin-narration" class="cutin-narration"></p>
+        </div>
+        <div id="cutin-visitor-box" style="display:none;" aria-hidden="true"></div>
+      </div>
+
+      <div class="cutin-footer">
+        <button id="btn-cutin-next" class="btn-cutin-next" type="button">黄泉平坂へ見送る ▸ <small>（タップで進む）</small></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= モーダル：夜明け（各夜終了時） ================= -->
+  <div id="result-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div id="modal-watermark" class="modal-watermark" aria-hidden="true">暁</div>
+      <p id="modal-subtitle" class="modal-subtitle">― 夜明け ―</p>
+      <h2 id="modal-title" class="modal-title">第一夜 明け</h2>
+      <div id="modal-body" class="modal-body"></div>
+      <div id="modal-stats-summary" class="modal-stats-summary"></div>
+      <div class="modal-actions">
+        <button id="btn-modal-next" class="btn-primary" type="button">次の夜へ進む</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 豪華リザルト画面（帳場日報：エンディング3分岐） ================= -->
+  <div id="ending-modal" class="ending-backdrop hidden" role="dialog" aria-modal="true" aria-label="帳場日報・エンディングリザルト">
+    <div id="ending-fx-layer" class="ending-fx-layer" aria-hidden="true"></div>
+
+    <div id="ending-scroll-card" class="ending-scroll-card ending-rank-true">
+      <div class="scroll-roller scroll-roller-top" aria-hidden="true"></div>
+
+      <div class="ending-scroll-inner">
+        <div id="ending-watermark" class="ending-watermark" aria-hidden="true">極</div>
+
+        <header class="ending-header">
+          <div class="ending-header-meta">
+            <span class="ending-ledger-tag">
+              <svg class="kamon-svg ending-kamon-inline" width="16" height="16"><use href="#kamon-yatsuduchiguruma"></use></svg>
+              彼岸旅館『逢曲時』帳場日報
+            </span>
+            <span id="ending-rank-badge" class="ending-rank-badge">極上の夜（トゥルーエンド）</span>
+          </div>
+
+          <div class="ending-title-row">
+            <span id="ending-seal-stamp" class="ending-seal-stamp">千客万来</span>
+            <h2 id="ending-title" class="ending-title">『千客万来・極上の逢曲時』</h2>
+          </div>
+
+          <p id="ending-description" class="ending-description"></p>
+        </header>
+
+        <section class="ending-score-board" aria-label="最終スコア">
+          <div class="wooden-plaque plaque-reputation">
+            <span class="plaque-label">最終評判</span>
+            <strong id="ending-score-rep" class="plaque-value">★×5</strong>
+            <span id="ending-score-rep-stars" class="plaque-sub-icons" aria-hidden="true">★★★★★</span>
+          </div>
+
+          <div class="wooden-plaque plaque-spirit">
+            <span class="plaque-label">最終雅</span>
+            <strong id="ending-score-spirit" class="plaque-value">◆×5</strong>
+            <span id="ending-score-spirit-gems" class="plaque-sub-icons" aria-hidden="true">◆◆◆◆◆</span>
+          </div>
+
+          <div class="wooden-plaque plaque-rooms">
+            <span class="plaque-label">成功数</span>
+            <strong id="ending-score-rooms" class="plaque-value">15 / 15室</strong>
+            <span id="ending-score-rooms-sub" class="plaque-sub-text">全五夜 総括</span>
+          </div>
+        </section>
+
+        <section class="ending-mvp-section" aria-label="今宵の殊勲">
+          <div id="ending-mvp-card" class="ending-mvp-card"></div>
+
+          <div class="ending-mvp-details">
+            <div class="ending-mvp-heading-wrap">
+              <span class="ending-mvp-crown">👑 今宵の殊勲（MVPキャスト）</span>
+              <h3 id="ending-mvp-title" class="ending-mvp-title">今宵の殊勲：女将・常世</h3>
+            </div>
+
+            <div class="ending-speech-bubble">
+              <span id="ending-mvp-speaker" class="ending-speech-speaker">【女将・常世からの労い】</span>
+              <p id="ending-mvp-quote" class="ending-speech-text"></p>
+            </div>
+          </div>
+        </section>
+
+        <footer class="ending-actions">
+          <button id="btn-ending-retry" class="btn-primary btn-ending-retry" type="button">
+            🏮 もう一度帳場に立つ
+          </button>
+          <button id="btn-ending-share" class="btn-x-share" type="button">
+            <span class="x-logo" aria-hidden="true">𝕏</span> 結果をXで呟く
+          </button>
+        </footer>
+      </div>
+
+      <div class="scroll-roller scroll-roller-bottom" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- ================= モーダル：手引書（遊び方） ================= -->
+  <div id="help-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card help-modal-card">
+      <div class="modal-watermark" aria-hidden="true">帳</div>
+      <p class="modal-subtitle">― 帳場衆の心得（スマホ版） ―</p>
+      <h2 class="modal-title">彼岸旅館『逢曲時』手引書</h2>
+      <div class="modal-body help-content">
+        <p><strong>全五夜</strong>にわたり迷い人を<strong>誘魅巫女</strong>の神楽でもてなし、宿の<strong>「🏮 評判（初期3／最大5）」</strong>と<strong>「🪭 雅（初期4／最大5）」</strong>を守り抜きましょう。</p>
+        <ul>
+          <li><strong>一、簡単2タップ配置：</strong>画面下部の手札を<strong>左右にスワイプ</strong>して誘魅を選び、<strong>タップで選択 → 配置したいお座敷をタップ</strong>すると配置できます。</li>
+          <li><strong>二、呼び鈴（手札入替）：</strong>1夜に1回だけ<strong>「雅」を1消費</strong>して、未配置の手札を山札から引き直せます。</li>
+          <li><strong>三、全10名の誘魅巫女：</strong><br>
+          ・<strong>女将・常世（4/4/4）</strong>：配置時に雅-1（解除で返却）<br>
+          ・<strong>ハルカ（舞4）</strong>／<strong>ならく（興4）</strong>／<strong>まりん（話4）</strong>：得意座敷でさらに+1<br>
+          ・<strong>月下香</strong>：成功時評判+1 ／ <strong>るちゃ</strong>：成功時雅+1 ／ <strong>玉藻</strong>：失敗ペナルティ1軽減<br>
+          ・<strong>にゃる</strong>：座敷ボーナスを+3にする<br>
+          ・<strong>らぼ（話4）</strong>：他座敷の話術+1＆成功時に3以下の評判か雅を+1回復<br>
+          ・<strong>四葩（2/2/2）</strong>：どの座敷でも全能力3として対応</li>
+        </ul>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-close-help" class="btn-primary" type="button">帳場へ戻る</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- デバッグ＆PC版切替ショートカット -->
+  <div id="debug-ending-bar" class="debug-ending-bar" aria-label="デバッグ・表示切替ショートカット">
+    <a href="index.html?view=pc" class="btn-debug-end" style="text-decoration:none;">[💻PC版へ]</a>
+    <button id="btn-debug-true" class="btn-debug-end" type="button" data-debug-ending="true">[True]</button>
+    <button id="btn-debug-normal" class="btn-debug-end" type="button" data-debug-ending="normal">[Normal]</button>
+    <button id="btn-debug-bad" class="btn-debug-end" type="button" data-debug-ending="bad">[Bad]</button>
+  </div>
+
+  <script src="data.js?v=20261109_4"></script>
+  <script src="app.js?v=20261109_4"></script>
+</body>
+</html>

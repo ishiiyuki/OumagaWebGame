@@ -4,11 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>逢曲時 帳場録 | 彼岸旅館「逢曲時」おうまがとき</title>
+  <!-- スマホでアクセスした際は自動的にスマホ専用画面（mobile.html）へ遷移（?view=pc 指定時はPC版を維持） -->
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get("view") === "pc") return;
+      var ua = navigator.userAgent || "";
+      var isMobileUA = /iPhone|iPod|Android.*Mobile|Windows Phone/i.test(ua);
+      var isSmallTouch =
+        window.matchMedia &&
+        window.matchMedia("(max-width: 820px) and (pointer: coarse)").matches;
+      if (isMobileUA || isSmallTouch) {
+        window.location.replace("mobile.html" + window.location.search + window.location.hash);
+      }
+    })();
+  </script>
   <!-- Google Fonts: Cinzel, Noto Serif JP, Shippori Mincho（公式ページ準拠） -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261109_3">
+  <link rel="stylesheet" href="style.css?v=20261109_4">
 </head>
 <body>
   <!-- BGMオーディオ要素（タイトル画面から常時ループ再生） -->
@@ -418,12 +433,13 @@
 
   <!-- ================= デバッグ確認用ショートカット（開発用・右下隅） ================= -->
   <div id="debug-ending-bar" class="debug-ending-bar" aria-label="デバッグ確認用ショートカット">
+    <a href="mobile.html" class="btn-debug-end" style="text-decoration:none;">[📱スマホ版へ]</a>
     <button id="btn-debug-true" class="btn-debug-end" type="button" data-debug-ending="true">[Debug: True]</button>
     <button id="btn-debug-normal" class="btn-debug-end" type="button" data-debug-ending="normal">[Debug: Normal]</button>
     <button id="btn-debug-bad" class="btn-debug-end" type="button" data-debug-ending="bad">[Debug: Bad]</button>
   </div>
 
-  <script src="data.js?v=20261109_3"></script>
-  <script src="app.js?v=20261109_3"></script>
+  <script src="data.js?v=20261109_4"></script>
+  <script src="app.js?v=20261109_4"></script>
 </body>
 </html>
