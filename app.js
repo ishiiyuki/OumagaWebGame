@@ -104,8 +104,85 @@
     introScreen: document.getElementById("intro-screen"),
     btnTitleStart: document.getElementById("btn-title-start"),
     btnIntroBack: document.getElementById("btn-intro-back"),
-    btnIntroPlay: document.getElementById("btn-intro-play")
+    btnIntroPlay: document.getElementById("btn-intro-play"),
+    // BGM制御用DOM
+    bgmPlayer: document.getElementById("bgm-player"),
+    btnBgmToggle: document.getElementById("btn-bgm-toggle")
   };
+
+  /* ==========================================================================
+     BGM再生＆音量制御（タイトル画面からループ再生・ゲーム開始時に少し音量を下げる）
+     ========================================================================== */
+  const BGM_VOLUME_TITLE = 0.25; // タイトル・手引書画面での控えめなBGM音量
+  const BGM_VOLUME_GAME = 0.14;  // ゲーム本編開始後のさらに少し下げた音量
+  let bgmFadeTimer = null;
+
+  function setBgmVolumeSmooth(targetVol, durationMs = 600) {
+    const audio = dom.bgmPlayer;
+    if (!audio) return;
+
+    if (bgmFadeTimer) {
+      clearInterval(bgmFadeTimer);
+      bgmFadeTimer = null;
+    }
+
+    const startVol = audio.volume;
+    const diff = targetVol - startVol;
+    if (Math.abs(diff) < 0.005 || durationMs <= 0) {
+      audio.volume = Math.max(0, Math.min(1, targetVol));
+      return;
+    }
+
+    const steps = 15;
+    const stepTime = Math.max(16, Math.floor(durationMs / steps));
+    let currentStep = 0;
+
+    bgmFadeTimer = setInterval(() => {
+      currentStep += 1;
+      if (currentStep >= steps) {
+        audio.volume = Math.max(0, Math.min(1, targetVol));
+        clearInterval(bgmFadeTimer);
+        bgmFadeTimer = null;
+      } else {
+        const nextVol = startVol + (diff * currentStep) / steps;
+        audio.volume = Math.max(0, Math.min(1, nextVol));
+      }
+    }, stepTime);
+  }
+
+  function updateBgmButtonUI() {
+    if (!dom.btnBgmToggle || !dom.bgmPlayer) return;
+    const isMuted = dom.bgmPlayer.muted || dom.bgmPlayer.paused;
+    dom.btnBgmToggle.textContent = isMuted ? "🔇 BGM" : "🔊 BGM";
+  }
+
+  function tryStartBgm(initialVol = BGM_VOLUME_TITLE) {
+    const audio = dom.bgmPlayer;
+    if (!audio) return;
+    audio.loop = true;
+    audio.volume = initialVol;
+
+    const playPromise = audio.play();
+    if (playPromise && typeof playPromise.then === "function") {
+      playPromise
+        .then(() => {
+          updateBgmButtonUI();
+        })
+        .catch(() => {
+          // ブラウザの自動再生制限でブロックされた場合は最初のユーザー操作で即座に再生開始
+          updateBgmButtonUI();
+          const unlockBgm = () => {
+            if (audio.paused && !audio.muted) {
+              audio.play().finally(updateBgmButtonUI);
+            }
+            document.removeEventListener("pointerdown", unlockBgm);
+            document.removeEventListener("keydown", unlockBgm);
+          };
+          document.addEventListener("pointerdown", unlockBgm, { once: true });
+          document.addEventListener("keydown", unlockBgm, { once: true });
+        });
+    }
+  }
 
   /* ==========================================================================
      初期化＆ゲームサイクル制御
@@ -1635,11 +1712,28 @@
     }
   });
 
+  // BGMオン／オフ切り替えボタン
+  if (dom.btnBgmToggle && dom.bgmPlayer) {
+    dom.btnBgmToggle.addEventListener("click", () => {
+      const audio = dom.bgmPlayer;
+      if (audio.paused) {
+        audio.muted = false;
+        audio.play().finally(updateBgmButtonUI);
+      } else {
+        audio.muted = !audio.muted;
+        updateBgmButtonUI();
+      }
+    });
+  }
+
   // タイトル画面 → 遊び方説明画面 → ゲーム本編開始の画面遷移
   if (dom.btnTitleStart) {
     dom.btnTitleStart.addEventListener("click", () => {
       dom.titleScreen.classList.add("hidden");
       dom.introScreen.classList.remove("hidden");
+      if (dom.bgmPlayer && dom.bgmPlayer.paused && !dom.bgmPlayer.muted) {
+        dom.bgmPlayer.play().finally(updateBgmButtonUI);
+      }
     });
   }
 
@@ -1647,12 +1741,18 @@
     dom.btnIntroBack.addEventListener("click", () => {
       dom.introScreen.classList.add("hidden");
       dom.titleScreen.classList.remove("hidden");
+      setBgmVolumeSmooth(BGM_VOLUME_TITLE, 400);
     });
   }
 
   if (dom.btnIntroPlay) {
     dom.btnIntroPlay.addEventListener("click", () => {
       dom.introScreen.classList.add("hidden");
+      if (dom.bgmPlayer && dom.bgmPlayer.paused && !dom.bgmPlayer.muted) {
+        dom.bgmPlayer.play().finally(updateBgmButtonUI);
+      }
+      // ゲーム本編開始時にBGM音量を少し下げる
+      setBgmVolumeSmooth(BGM_VOLUME_GAME, 700);
       initGame();
     });
   }
@@ -1670,5 +1770,6 @@
   }
 
   initBackgroundParticles();
+  tryStartBgm(BGM_VOLUME_TITLE);
   initGame();
 })();

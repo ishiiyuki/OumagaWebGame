@@ -47,7 +47,7 @@ html, body {
   background-color: var(--c-bg-deep);
   color: var(--c-washi);
   font-family: var(--font-serif);
-  overflow-x: hidden;
+  overflow: auto;
   user-select: none;
   -webkit-font-smoothing: antialiased;
 }
@@ -117,18 +117,21 @@ html, body {
   border: 1px solid #ffe885;
 }
 
-/* メインレイアウト */
+/* メインレイアウト（ブラウザサイズに合わせて伸縮し、レイアウトが崩れる最小サイズ以下には縮小しない） */
 .app-container {
   position: relative;
   z-index: 2;
-  max-width: 1720px;
+  width: 100%;
+  max-width: 1760px;
+  min-width: 1260px;
+  height: 100vh;
+  min-height: 740px;
   margin: 0 auto;
-  padding: 8px 18px 12px;
-  min-height: 100vh;
+  padding: clamp(6px, 0.9vh, 10px) clamp(12px, 1.3vw, 20px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: clamp(6px, 0.9vh, 10px);
 }
 
 /* ==========================================================================
@@ -366,8 +369,8 @@ html, body {
 
 .rooms-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(10px, 1.1vw, 14px);
   align-items: stretch;
 }
 
@@ -545,7 +548,7 @@ html, body {
 /* 誘魅配置スロット（各客室の下段：配置した誘魅の画像も大きく表示） */
 .assignment-slot {
   position: relative;
-  min-height: 98px;
+  min-height: clamp(80px, 10.5vh, 98px);
   border: 2px dashed rgba(212, 175, 55, 0.35);
   border-radius: 5px;
   background: rgba(8, 8, 12, 0.72);
@@ -594,8 +597,8 @@ html, body {
 }
 
 .assigned-portrait {
-  width: 82px;
-  height: 90px;
+  width: clamp(68px, 8vh, 82px);
+  height: clamp(74px, 9vh, 90px);
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -924,11 +927,11 @@ html, body {
   cursor: not-allowed;
 }
 
-/* 誘魅カード5枚グリッド（カードサイズ感を維持したまま5枚横並び） */
+/* 誘魅カード5枚グリッド（ブラウザ幅に合わせて伸縮し、最小幅以下には潰れない） */
 .cast-hand {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(8px, 1vw, 12px);
 }
 
 /* 大型キャラクター立ち絵仕立ての誘魅カード */
@@ -1042,10 +1045,10 @@ html, body {
   z-index: 1;
 }
 
-/* 誘魅カードの大型ポートレート枠（カード上部全面・立ち絵全体が収まる表示） */
+/* 誘魅カードの大型ポートレート枠（カード上部全面・ブラウザ高さに合わせて伸縮＆下限固定） */
 .cast-portrait {
   width: 100%;
-  height: 210px;
+  height: clamp(148px, 21vh, 215px);
   border-bottom: 1px solid rgba(212, 175, 55, 0.45);
   overflow: hidden;
   position: relative;
@@ -1105,10 +1108,10 @@ html, body {
 
 /* カード下部の情報エリア（名前＋3ステータス＋能力説明全文） */
 .cast-card-body {
-  padding: 8px 10px 10px;
+  padding: clamp(6px, 0.8vh, 9px) clamp(7px, 0.75vw, 10px);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: clamp(4px, 0.6vh, 6px);
   position: relative;
   z-index: 2;
 }
@@ -1117,12 +1120,12 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  flex-wrap: wrap;
+  gap: 4px;
+  flex-wrap: nowrap;
 }
 
 .cast-name {
-  font-size: 1.08rem;
+  font-size: clamp(0.92rem, 1vw, 1.08rem);
   font-weight: 800;
   color: var(--c-washi);
   white-space: nowrap;
@@ -1131,16 +1134,16 @@ html, body {
 .cast-trait-box {
   background: rgba(8, 8, 12, 0.78);
   border-left: 3px solid var(--c-amber);
-  padding: 5px 8px;
+  padding: clamp(4px, 0.6vh, 6px) 7px;
   border-radius: 3px;
-  font-size: 0.74rem;
-  line-height: 1.45;
+  font-size: clamp(0.68rem, 0.72vw, 0.74rem);
+  line-height: 1.4;
   white-space: normal;
 }
 
 .cast-trait-title {
   display: block;
-  font-size: 0.73rem;
+  font-size: clamp(0.68rem, 0.72vw, 0.73rem);
   font-weight: 800;
   color: var(--c-amber);
   margin-bottom: 1px;
@@ -1148,26 +1151,28 @@ html, body {
 
 .cast-trait {
   color: #ece4d0;
-  font-size: 0.73rem;
-  line-height: 1.4;
+  font-size: clamp(0.68rem, 0.72vw, 0.73rem);
+  line-height: 1.38;
 }
 
 /* 誘魅の3属性パラメータ表示（名前横のコンパクトバッジ） */
 .cast-stats-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
 .cast-stat-pill {
   background: rgba(8, 8, 12, 0.82);
   border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: 4px;
-  padding: 2px 5px;
+  padding: 2px clamp(3px, 0.35vw, 5px);
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-size: 0.7rem;
+  gap: 2px;
+  font-size: clamp(0.64rem, 0.68vw, 0.7rem);
+  white-space: nowrap;
 }
 
 .cast-stat-pill.specialty {
@@ -1177,12 +1182,12 @@ html, body {
 
 .stat-label {
   color: #c7beab;
-  font-size: 0.66rem;
+  font-size: clamp(0.58rem, 0.62vw, 0.66rem);
 }
 
 .stat-val {
   font-weight: 800;
-  font-size: 0.88rem;
+  font-size: clamp(0.76rem, 0.82vw, 0.88rem);
   color: var(--c-washi);
 }
 
@@ -2636,19 +2641,7 @@ html, body {
   border-color: #fff;
 }
 
-/* レスポンシブ調整 */
-@media (max-width: 1080px) {
-  .top-bar {
-    grid-template-columns: 1fr 1fr;
-  }
-  .rooms-grid {
-    grid-template-columns: 1fr;
-  }
-  .cast-hand {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
+/* モーダル等の小画面調整（メインの帳場レイアウト自体は min-width: 1260px / min-height: 740px で固定維持し崩さない） */
 @media (max-width: 720px) {
   .cutin-stage {
     grid-template-columns: 1fr;
@@ -2674,14 +2667,5 @@ html, body {
   }
   .title-vertical-deco {
     display: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .top-bar {
-    grid-template-columns: 1fr;
-  }
-  .cast-hand {
-    grid-template-columns: 1fr;
   }
 }

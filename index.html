@@ -8,9 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261022_1">
+  <link rel="stylesheet" href="style.css?v=20261109_2">
 </head>
 <body>
+  <!-- BGMオーディオ要素（タイトル画面から常時ループ再生） -->
+  <audio id="bgm-player" src="BGM/久遠.mp3" loop preload="auto"></audio>
   <!-- 共通SVGシンボル定義：女将・常世の家紋「八つ槌車（やつづちぐるま）」 -->
   <svg width="0" height="0" style="position:absolute; visibility:hidden;" aria-hidden="true">
     <defs>
@@ -204,6 +206,7 @@
       <div class="log-panel">
         <div id="game-log" class="log-entries" role="log" aria-live="polite"></div>
         <div class="log-header-btns">
+          <button id="btn-bgm-toggle" class="btn-sub" type="button" title="BGMのオン／オフを切り替え">🔊 BGM</button>
           <a id="btn-world" class="btn-sub" href="https://oumagatoki.pages.dev/#top" target="_blank" rel="noopener noreferrer" title="逢曲時の公式サイトを開く">世界観</a>
           <button id="btn-help" class="btn-sub" type="button" title="遊び方を確認">手引書</button>
         </div>
@@ -420,7 +423,7 @@
     <button id="btn-debug-bad" class="btn-debug-end" type="button" data-debug-ending="bad">[Debug: Bad]</button>
   </div>
 
-  <script src="data.js?v=20261022_1"></script>
-  <script src="app.js?v=20261022_1"></script>
+  <script src="data.js?v=20261109_2"></script>
+  <script src="app.js?v=20261109_2"></script>
 </body>
 </html>
