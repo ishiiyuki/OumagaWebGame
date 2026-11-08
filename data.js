@@ -312,7 +312,7 @@ window.GAME_DATA = {
       title: "古参女中",
       fullName: "女中・らぼ",
       kanjiWatermark: "古",
-      imagePath: "image/labo.png",
+      imagePath: "image/labo.png?v=20261109_3",
       accentColor: "#5c8a66",
       stats: {
         talk: 4,
