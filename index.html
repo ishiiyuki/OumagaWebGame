@@ -23,11 +23,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261109_4">
+  <link rel="stylesheet" href="style.css?v=20261112_1">
 </head>
 <body>
-  <!-- BGMオーディオ要素（タイトル画面から常時ループ再生） -->
-  <audio id="bgm-player" src="BGM/久遠.mp3" loop preload="auto"></audio>
+  <!-- BGMオーディオ要素（再生開始まで読み込まない。タイトルでの自動再生と、ブロック時の初回操作アンロックは従来どおり） -->
+  <audio id="bgm-player" src="BGM/久遠.mp3" loop preload="none"></audio>
   <!-- 共通SVGシンボル定義：女将・常世の家紋「八つ槌車（やつづちぐるま）」 -->
   <svg width="0" height="0" style="position:absolute; visibility:hidden;" aria-hidden="true">
     <defs>
@@ -110,6 +110,9 @@
       <div class="title-actions">
         <a id="btn-title-world" class="btn-secondary btn-title-sub" href="https://oumagatoki.pages.dev/#top" target="_blank" rel="noopener noreferrer">
           📜 世界観（公式サイトへ）
+        </a>
+        <a id="btn-title-switch-view" class="btn-secondary btn-title-sub" href="mobile.html" data-switch-view="mobile">
+          📱 スマホ版
         </a>
         <button id="btn-title-start" class="btn-primary btn-title-large" type="button">
           🏮 暖簾をくぐる（手引書へ）
@@ -223,6 +226,7 @@
         <div class="log-header-btns">
           <button id="btn-bgm-toggle" class="btn-sub" type="button" title="BGMのオン／オフを切り替え">🔊 BGM</button>
           <a id="btn-world" class="btn-sub" href="https://oumagatoki.pages.dev/#top" target="_blank" rel="noopener noreferrer" title="逢曲時の公式サイトを開く">世界観</a>
+          <a id="btn-switch-view" class="btn-sub" href="mobile.html" data-switch-view="mobile" title="スマートフォン向け画面を開く">スマホ版</a>
           <button id="btn-help" class="btn-sub" type="button" title="遊び方を確認">手引書</button>
         </div>
       </div>
@@ -431,15 +435,14 @@
     </div>
   </div>
 
-  <!-- ================= デバッグ確認用ショートカット（開発用・右下隅） ================= -->
-  <div id="debug-ending-bar" class="debug-ending-bar" aria-label="デバッグ確認用ショートカット">
-    <a href="mobile.html" class="btn-debug-end" style="text-decoration:none;">[📱スマホ版へ]</a>
+  <!-- ================= デバッグ確認用ショートカット（?debug=1 のときだけ表示） ================= -->
+  <div id="debug-ending-bar" class="debug-ending-bar hidden" aria-hidden="true" aria-label="デバッグ確認用ショートカット">
     <button id="btn-debug-true" class="btn-debug-end" type="button" data-debug-ending="true">[Debug: True]</button>
     <button id="btn-debug-normal" class="btn-debug-end" type="button" data-debug-ending="normal">[Debug: Normal]</button>
     <button id="btn-debug-bad" class="btn-debug-end" type="button" data-debug-ending="bad">[Debug: Bad]</button>
   </div>
 
-  <script src="data.js?v=20261109_5"></script>
-  <script src="app.js?v=20261109_5"></script>
+  <script src="data.js?v=20261112_1"></script>
+  <script src="app.js?v=20261112_1"></script>
 </body>
 </html>

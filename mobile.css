@@ -633,6 +633,12 @@ html, body {
   gap: 6px;
 }
 
+.mobile-hand-bar .btn-sub {
+  flex: 0 0 auto;
+  padding: 1px 6px;
+  font-size: 0.62rem;
+}
+
 .mobile-hand-meta {
   display: flex;
   align-items: center;
@@ -662,6 +668,8 @@ html, body {
 }
 
 .selection-hint {
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 0.66rem;
   color: #f3e5ab;
   font-weight: 700;
@@ -696,6 +704,8 @@ html, body {
   flex: 0 0 162px;
   width: 162px;
   scroll-snap-align: start;
+  touch-action: pan-x;
+  -webkit-user-drag: none;
   background: linear-gradient(165deg, rgba(34, 24, 28, 0.96) 0%, rgba(15, 13, 19, 0.99) 100%);
   border: 1px solid rgba(212, 175, 55, 0.45);
   border-top: 3px solid var(--c-amber);
@@ -1000,7 +1010,8 @@ html, body {
   width: 100%;
   max-width: 460px;
   max-height: 92dvh;
-  overflow-y: auto;
+  /* 収まるカードでは内側スクロールバーを出さない。長い手引・開帳前説明だけ後段でスクロールさせる */
+  overflow: hidden;
   background: linear-gradient(180deg, #1b161f 0%, #0d0c12 100%);
   border: 2px solid var(--c-amber);
   border-radius: 8px;
@@ -1009,11 +1020,17 @@ html, body {
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.92);
 }
 
+/* 開帳前の手引と遊び方モーダルは内容が長いので、はみ出したときだけスクロールする */
+.intro-screen-card,
+.help-modal-card {
+  overflow-y: auto;
+}
+
 .title-screen-watermark,
 .modal-watermark {
   position: absolute;
   right: 10px;
-  bottom: -10px;
+  bottom: 0;
   font-size: 5.5rem;
   font-weight: 800;
   color: rgba(212, 175, 55, 0.04);
@@ -1530,7 +1547,7 @@ html, body {
   font-weight: 800;
 }
 
-/* デバッグ＆PC切替ショートカット */
+/* デバッグショートカット（?debug=1 のときだけ表示） */
 .debug-ending-bar {
   position: fixed;
   right: 6px;
@@ -1539,6 +1556,10 @@ html, body {
   display: flex;
   gap: 3px;
   opacity: 0.45;
+}
+
+.debug-ending-bar.hidden {
+  display: none;
 }
 
 .btn-debug-end {

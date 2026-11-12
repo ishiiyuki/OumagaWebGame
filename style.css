@@ -1222,7 +1222,7 @@ html, body {
 }
 
 /* ==========================================================================
-   モーダルウィンドウ（夜明け・結果・世界観・手引書）
+   モーダルウィンドウ（夜明け・結果・手引書）
    ========================================================================== */
 .modal-backdrop {
   position: fixed;
@@ -1255,78 +1255,18 @@ html, body {
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.9);
   overflow: hidden;
   max-height: 92vh;
-  overflow-y: auto;
 }
 
 .help-modal-card {
   max-width: 680px;
   text-align: left;
-}
-
-.world-modal-card {
-  max-width: 820px;
-  text-align: left;
-}
-
-.world-modal-kamon {
-  width: 52px;
-  height: 52px;
-  margin: 0 auto 8px;
-  color: var(--c-amber);
-  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
-}
-
-.world-lore-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-top: 10px;
-}
-
-.world-lore-card {
-  background: rgba(10, 10, 14, 0.78);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  border-top: 2px solid var(--c-amber);
-  border-radius: 6px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.world-lore-header {
-  border-bottom: 1px dashed rgba(212, 175, 55, 0.28);
-  padding-bottom: 6px;
-}
-
-.world-lore-title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--c-amber);
-  letter-spacing: 0.08em;
-}
-
-.world-lore-sub {
-  display: block;
-  font-size: 0.74rem;
-  color: #b8b09c;
-  margin-top: 2px;
-}
-
-.world-lore-text {
-  font-size: 0.82rem;
-  line-height: 1.68;
-  color: #e4dcc8;
-}
-
-.world-lore-text strong {
-  color: var(--c-amber-light);
+  overflow-y: auto;
 }
 
 .modal-watermark {
   position: absolute;
   right: 16px;
-  bottom: -20px;
+  bottom: 0;
   font-size: 7.5rem;
   font-weight: 800;
   color: rgba(212, 175, 55, 0.04);
@@ -2619,6 +2559,10 @@ html, body {
   transition: opacity 0.2s ease;
 }
 
+.debug-ending-bar.hidden {
+  display: none;
+}
+
 .debug-ending-bar:hover {
   opacity: 0.95;
 }
@@ -2650,7 +2594,6 @@ html, body {
     display: none;
   }
   .intro-grid,
-  .world-lore-grid,
   .ending-score-board,
   .ending-mvp-section {
     grid-template-columns: 1fr;
