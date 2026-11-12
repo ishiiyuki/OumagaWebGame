@@ -79,12 +79,6 @@
     btnHelp: document.getElementById("btn-help"),
     helpModal: document.getElementById("help-modal"),
     btnCloseHelp: document.getElementById("btn-close-help"),
-    // 世界観モーダル用DOM
-    btnWorld: document.getElementById("btn-world"),
-    btnTitleWorld: document.getElementById("btn-title-world"),
-    worldModal: document.getElementById("world-modal"),
-    worldLoreContainer: document.getElementById("world-lore-container"),
-    btnCloseWorld: document.getElementById("btn-close-world"),
     bgCanvas: document.getElementById("bg-canvas"),
     // カットイン会話ウィンドウ用DOM
     cutinOverlay: document.getElementById("cutin-overlay"),
@@ -109,6 +103,21 @@
     bgmPlayer: document.getElementById("bgm-player"),
     btnBgmToggle: document.getElementById("btn-bgm-toggle")
   };
+
+  // スマホ専用画面（mobile.html）かどうか。ヒント文言とドラッグの有無を切り替える
+  const isMobileLayout = Boolean(document.querySelector(".mobile-app-container"));
+  // デバッグ用エンディングバーは ?debug=1 のときだけ出す
+  const debugEnabled = new URLSearchParams(window.location.search).get("debug") === "1";
+
+  // 進行中の夜解決・カットイン・宵の口タイマーをまとめて破棄するための世代番号
+  let flowEpoch = 0;
+  let nightPhaseTimer = null;
+  let cutinResolver = null;
+
+  // 一度404になった画像パスは、同じセッション中の再描画では再リクエストしない
+  // （ページを開き直せば、ファイルが追加されていれば普通に読み込まれる）
+  const failedImageSrcs = new Set();
+  const MAX_LOG_ENTRIES = 40;
 
   /* ==========================================================================
      BGM再生＆音量制御（タイトル画面からループ再生・ゲーム開始時に少し音量を下げる）
@@ -187,7 +196,44 @@
   /* ==========================================================================
      初期化＆ゲームサイクル制御
      ========================================================================== */
+  function clearNightPhaseTimer() {
+    if (nightPhaseTimer !== null) {
+      clearTimeout(nightPhaseTimer);
+      nightPhaseTimer = null;
+    }
+  }
+
+  /**
+   * クリック待ちのおもてなしカットインを閉じ、Promiseを解決する。
+   * 解決しないまま隠すと、夜の解決処理が永遠に止まったままになる。
+   */
+  function dismissCutin() {
+    if (dom.cutinOverlay) {
+      dom.cutinOverlay.classList.add("hidden");
+      dom.cutinOverlay.onclick = null;
+    }
+    if (dom.btnCutinNext) {
+      dom.btnCutinNext.onclick = null;
+    }
+    if (cutinResolver) {
+      const resolve = cutinResolver;
+      cutinResolver = null;
+      resolve();
+    }
+  }
+
+  /**
+   * 進行中の夜解決・カットイン・フェーズ切替タイマーを無効化する。
+   * デバッグエンディングやリトライで、裏の解決処理が画面に重ならないようにする。
+   */
+  function abortPendingFlow() {
+    flowEpoch += 1;
+    clearNightPhaseTimer();
+    dismissCutin();
+  }
+
   function initGame() {
+    abortPendingFlow();
     state.night = 1;
     state.reputation = DATA.config.initialReputation;
     state.spirit = DATA.config.initialSpirit;
@@ -221,26 +267,6 @@
     addLog("八つ槌車の提灯に火が灯り、彼岸旅館『逢曲時』が開帳しました。迷い込んだ魂を神楽で鎮め、“黄泉平坂”より現世へ送り還しましょう。");
 
     startNight(1);
-  }
-
-  /**
-   * 世界観（WORLD）モーダルの内容を構築
-   */
-  function renderWorldLoreModal() {
-    if (!dom.worldLoreContainer || !Array.isArray(DATA.worldLore)) return;
-    dom.worldLoreContainer.innerHTML = DATA.worldLore
-      .map(
-        (item) => `
-        <article class="world-lore-card">
-          <div class="world-lore-header">
-            <h3 class="world-lore-title">${escapeHtml(item.title)}</h3>
-            <span class="world-lore-sub">${escapeHtml(item.subtitle || "")}</span>
-          </div>
-          <p class="world-lore-text">${item.body}</p>
-        </article>
-      `
-      )
-      .join("");
   }
 
   /**
@@ -424,8 +450,12 @@
     renderAll();
 
     // 少し間を置いて「逢曲時（配置フェーズ）」へハイライト移動
-    setTimeout(() => {
-      if (state.phase === "assign") {
+    // リトライやデバッグ終了で夜が差し替わったら、古いタイマーは発火させない
+    clearNightPhaseTimer();
+    const phaseNight = nightNumber;
+    nightPhaseTimer = setTimeout(() => {
+      nightPhaseTimer = null;
+      if (state.phase === "assign" && state.night === phaseNight) {
         setPhaseIndicator("oumaga");
       }
     }, 450);
@@ -435,9 +465,15 @@
      計算・判定ロジック（複合要求＆固有パッシブ効果対応）
      ========================================================================== */
 
-  function evaluateAssignment(room, visitor, cast) {
+  /**
+   * @param {{ reputation: number, spirit: number } | null} statusSnapshot
+   *   配置プレビュー用。省略時は現在の評判・雅（夜の解決は部屋ごとに更新済みの値）を使う。
+   */
+  function evaluateAssignment(room, visitor, cast, statusSnapshot) {
     const reqs = getVisitorRequirements(visitor);
     const passiveNotes = [];
+    const repNow = statusSnapshot ? statusSnapshot.reputation : state.reputation;
+    const spiNow = statusSnapshot ? statusSnapshot.spirit : state.spirit;
 
     // 他のお座敷に「古参女中・らぼ」が配置されているか判定
     const isLaboInOtherRoom = Object.entries(state.roomState).some(([rId, rSt]) => {
@@ -528,11 +564,11 @@
         } else if (cast.passiveType === "veteran_maid") {
           // 女中・らぼ【古参の目配り】：成功時、3以下の『評判』か『雅』のうち低い方を+1回復
           const addVal = cast.passiveValue || 1;
-          if (state.reputation <= 3 || state.spirit <= 3) {
-            if (state.reputation <= state.spirit && state.reputation <= 3) {
+          if (repNow <= 3 || spiNow <= 3) {
+            if (repNow <= spiNow && repNow <= 3) {
               deltaRep += addVal;
               passiveNotes.push(`${cast.name}効果：評判+${addVal}`);
-            } else if (state.spirit <= 3) {
+            } else if (spiNow <= 3) {
               deltaSpi += addVal;
               passiveNotes.push(`${cast.name}効果：雅+${addVal}`);
             }
@@ -564,6 +600,38 @@
       deltaSpi,
       passiveNotes
     };
+  }
+
+  /**
+   * 配置プレビュー用に、夜の解決と同じく部屋順で評判・雅を進めながら判定する。
+   * らぼの回復先は直前の部屋の結果で変わるため、配置時点の値のままだと本判定と食い違う。
+   */
+  function previewNightAssignments() {
+    let simRep = state.reputation;
+    let simSpi = state.spirit;
+    const maxRep = DATA.config.maxReputation;
+    const maxSpi = DATA.config.maxSpirit;
+    const previews = {};
+
+    DATA.rooms.forEach((room) => {
+      const rState = state.roomState[room.id];
+      if (!rState || !rState.visitor) {
+        previews[room.id] = null;
+        return;
+      }
+      const assignedCast = rState.assignedCastId
+        ? DATA.casts.find((c) => c.id === rState.assignedCastId) || null
+        : null;
+      const preview = evaluateAssignment(room, rState.visitor, assignedCast, {
+        reputation: simRep,
+        spirit: simSpi
+      });
+      previews[room.id] = preview;
+      simRep = Math.max(0, Math.min(maxRep, simRep + preview.deltaRep));
+      simSpi = Math.max(0, Math.min(maxSpi, simSpi + preview.deltaSpi));
+    });
+
+    return previews;
   }
 
   function isCastCurrentlyAssigned(castId) {
@@ -677,6 +745,8 @@
      ========================================================================== */
   async function resolveNight() {
     if (state.phase !== "assign") return;
+    const epoch = flowEpoch;
+    clearNightPhaseTimer();
     state.phase = "resolving";
     state.selectedCastId = null;
     setPhaseIndicator("midnight");
@@ -702,6 +772,7 @@
       }
 
       await sleep(420);
+      if (epoch !== flowEpoch) return;
 
       const evalResult = evaluateAssignment(room, visitor, cast);
       const { isSuccess, deltaRep, deltaSpi, passiveNotes, checks } = evalResult;
@@ -724,8 +795,10 @@
 
       if (isSuccess && cast) {
         await showHospitalityCutin(room, visitor, cast, deltaRep, deltaSpi, passiveNotes);
+        if (epoch !== flowEpoch) return;
       }
 
+      if (epoch !== flowEpoch) return;
       applyStatusDelta(deltaRep, deltaSpi);
 
       const checkSummary = checks
@@ -749,6 +822,7 @@
       renderRooms();
 
       await sleep(750);
+      if (epoch !== flowEpoch) return;
 
       if (state.reputation <= 0 || state.spirit <= 0) {
         break;
@@ -756,6 +830,7 @@
     }
 
     await sleep(600);
+    if (epoch !== flowEpoch) return;
 
     // 途中で「評判」または「雅」が0になった場合はバッドエンド（営業終了）
     if (state.reputation <= 0 || state.spirit <= 0) {
@@ -797,6 +872,7 @@
    */
   function showHospitalityCutin(room, visitor, cast, deltaRep, deltaSpi, passiveNotes = []) {
     return new Promise((resolve) => {
+      cutinResolver = resolve;
       const castDialogues = DATA.hospitalityDialogues?.[cast.id];
       const scene = castDialogues?.byVisitor?.[visitor.id] || {
         castLine: castDialogues?.defaultCastLine || cast.quote || "「神楽の芸にて、貴方の魂を現世へと送り還しましょう」",
@@ -811,10 +887,7 @@
       const passiveBadge = passiveNotes.length > 0 ? `（${passiveNotes.join("・")}）` : "";
       dom.cutinRewardBadge.textContent = `獲得：${rewardText}${passiveBadge}`;
 
-      const safeCastImg = (cast.imagePath || "").trim();
-      const castImgTag = safeCastImg
-        ? `<img src="${escapeHtml(safeCastImg)}" alt="${escapeHtml(cast.fullName)}" class="card-real-img" onload="this.parentElement.classList.add('has-loaded-img')" onerror="this.remove()">`
-        : "";
+      const castImgTag = buildCardImageHTML(cast.imagePath, cast.fullName);
       dom.cutinCastBox.innerHTML = `
         <div class="cutin-portrait-frame" style="background: radial-gradient(circle at 50% 45%, ${cast.accentColor}66, #0d0c12)">
           ${castImgTag}
@@ -835,9 +908,11 @@
 
       const closeCutin = (e) => {
         if (e) e.stopPropagation();
+        if (cutinResolver !== resolve) return;
         dom.cutinOverlay.classList.add("hidden");
         dom.cutinOverlay.onclick = null;
         dom.btnCutinNext.onclick = null;
+        cutinResolver = null;
         resolve();
       };
 
@@ -896,6 +971,7 @@
    */
   function renderRooms() {
     dom.roomsGrid.innerHTML = "";
+    const nightPreviews = previewNightAssignments();
 
     DATA.rooms.forEach((room) => {
       const rState = state.roomState[room.id];
@@ -924,7 +1000,7 @@
 
       let slotInnerHTML = "";
       if (assignedCast) {
-        const evalPreview = evaluateAssignment(room, visitor, assignedCast);
+        const evalPreview = nightPreviews[room.id];
 
         const breakdownItemsHTML = evalPreview.checks
           .map((chk) => {
@@ -948,10 +1024,7 @@
             ? `外す（雅+${assignedCast.deploySpiritCost}）`
             : "外す";
 
-        const safeAssignedImg = (assignedCast.imagePath || "").trim();
-        const assignedImgHTML = safeAssignedImg
-          ? `<img src="${escapeHtml(safeAssignedImg)}" alt="${escapeHtml(assignedCast.fullName)}" class="card-real-img" onload="this.parentElement.classList.add('has-loaded-img')" onerror="this.remove()">`
-          : "";
+        const assignedImgHTML = buildCardImageHTML(assignedCast.imagePath, assignedCast.fullName);
 
         slotInnerHTML = `
           <div class="assigned-cast-view">
@@ -981,13 +1054,16 @@
           </div>
         `;
       } else {
+        const emptyPrompt = isMobileLayout
+          ? state.selectedCastId
+            ? "▸ ここをタップして選択中の誘魅を配置 ◂"
+            : "ここに誘魅を配置（タップで選択）"
+          : state.selectedCastId
+            ? "▸ ここをクリックして選択中の誘魅を配置 ◂"
+            : "ここに誘魅を配置（ドラッグ＆ドロップ または クリック）";
         slotInnerHTML = `
           <div class="slot-empty-prompt">
-            ${
-              state.selectedCastId
-                ? "▸ ここをクリックして選択中の誘魅を配置 ◂"
-                : "ここに誘魅を配置（ドラッグ＆ドロップ または クリック）"
-            }
+            ${emptyPrompt}
           </div>
         `;
       }
@@ -1136,13 +1212,11 @@
       if (isCostLocked) card.classList.add("cost-locked-card");
       if (isDisabled) card.classList.add("disabled-card");
 
-      card.draggable = !isDisabled;
+      // スマホは横スワイプで手札を送る。HTML5ドラッグを有効にするとスワイプと衝突する
+      card.draggable = !isMobileLayout && !isDisabled;
       card.dataset.castId = cast.id;
 
-      const safeImg = (cast.imagePath || "").trim();
-      const portraitImgHTML = safeImg
-        ? `<img src="${escapeHtml(safeImg)}" alt="${escapeHtml(cast.fullName)}" class="card-real-img" onload="this.parentElement.classList.add('has-loaded-img')" onerror="this.remove()">`
-        : "";
+      const portraitImgHTML = buildCardImageHTML(cast.imagePath, cast.fullName);
 
       let ribbonHTML = "";
       if (assignedRoomName) {
@@ -1201,15 +1275,18 @@
         </div>
       `;
 
-      card.addEventListener("dragstart", (e) => {
-        if (isDisabled) {
-          e.preventDefault();
-          return;
-        }
-        state.selectedCastId = cast.id;
-        e.dataTransfer.setData("text/plain", cast.id);
-        e.dataTransfer.effectAllowed = "move";
-      });
+      if (!isMobileLayout) {
+        card.addEventListener("dragstart", (e) => {
+          if (isDisabled) {
+            e.preventDefault();
+            return;
+          }
+          // クリック選択とは別経路。ここで selectedCastId を立てて再描画しないと、
+          // ドロップをキャンセルしたあと見た目は未選択のまま次の座敷クリックで配置される。
+          e.dataTransfer.setData("text/plain", cast.id);
+          e.dataTransfer.effectAllowed = "move";
+        });
+      }
 
       card.addEventListener("click", () => {
         if (state.phase !== "assign") return;
@@ -1249,9 +1326,15 @@
       }
     }
 
+    if (!dom.selectionHint) return;
+
     if (state.selectedCastId) {
       const c = DATA.casts.find((item) => item.id === state.selectedCastId);
-      dom.selectionHint.textContent = `【${c.fullName}】を選択中 ― 配置先のお座敷をクリック`;
+      dom.selectionHint.textContent = isMobileLayout
+        ? `【${c.fullName}】を選択中 ― お座敷をタップ`
+        : `【${c.fullName}】を選択中 ― 配置先のお座敷をクリック`;
+    } else if (isMobileLayout) {
+      dom.selectionHint.textContent = "カードをタップして選択";
     } else {
       dom.selectionHint.textContent =
         "誘魅をお座敷へドラッグ＆ドロップ、またはクリックで配置";
@@ -1394,6 +1477,9 @@
    * @param {{ isDebug?: boolean }} options
    */
   function showEndingScreen(endingType, options = {}) {
+    // 夜の解決中やカットイン待ちのまま終了画面を出すと、Promiseが解決せず
+    // 裏で解決処理がエンディングに重なって進んでしまう
+    abortPendingFlow();
     state.phase = "modal";
 
     // 他のオーバーレイが開いていれば閉じる
@@ -1490,10 +1576,7 @@
     if (dom.endingMvpCard) {
       dom.endingMvpCard.classList.remove("has-loaded-img");
       dom.endingMvpCard.style.background = `radial-gradient(circle at 50% 42%, ${mvpCast.accentColor}77, #0d0c12 88%)`;
-      const safeImg = (mvpCast.imagePath || "").trim();
-      const imgHTML = safeImg
-        ? `<img src="${escapeHtml(safeImg)}" alt="${escapeHtml(mvpCast.fullName)}" class="card-real-img" onload="this.parentElement.classList.add('has-loaded-img')" onerror="this.remove()">`
-        : "";
+      const imgHTML = buildCardImageHTML(mvpCast.imagePath, mvpCast.fullName);
       dom.endingMvpCard.innerHTML = `
         <span class="ending-mvp-card-tag">今宵の殊勲</span>
         ${imgHTML}
@@ -1535,7 +1618,7 @@
           `${mvpCast.endingQuotes?.[endingType] || ""}`,
           `#逢曲時 #逢曲時帳場録`
         ];
-        const shareUrl = "https://oumagatoki.pages.dev/";
+        const shareUrl = getGameShareUrl();
         const tweetIntent = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
           shareLines.join("\n")
         )}&url=${encodeURIComponent(shareUrl)}`;
@@ -1550,10 +1633,35 @@
      ユーティリティ＆ログ出力
      ========================================================================== */
   function addLog(message, className = "") {
+    if (!dom.gameLog) return;
     const div = document.createElement("div");
     div.className = `log-entry ${className}`;
     div.textContent = message;
     dom.gameLog.prepend(div);
+    while (dom.gameLog.childElementCount > MAX_LOG_ENTRIES) {
+      dom.gameLog.lastElementChild.remove();
+    }
+  }
+
+  /**
+   * 共有用のゲームURL。debug などのクエリは含めない。
+   * index.html / mobile.html で開いていても、公開時のディレクトリURLに揃える。
+   */
+  function getGameShareUrl() {
+    const url = new URL(window.location.href);
+    url.search = "";
+    url.hash = "";
+    url.pathname = url.pathname.replace(/(?:index|mobile)\.html$/i, "");
+    return url.toString();
+  }
+
+  /**
+   * 既知の失敗パスは img を出さない。onload / onerror は文書のキャプチャリスナーで受ける。
+   */
+  function buildCardImageHTML(imagePath, alt) {
+    const safeImg = (imagePath || "").trim();
+    if (!safeImg || failedImageSrcs.has(safeImg)) return "";
+    return `<img src="${escapeHtml(safeImg)}" alt="${escapeHtml(alt)}" class="card-real-img">`;
   }
 
   function formatStake(stakeObj, isReward) {
@@ -1624,23 +1732,59 @@
     const particles = [];
     const count = 38;
 
+    // 放射グラデーションは位置が変わるたびに作り直さず、粒子ごとに一度だけ描いて使い回す
+    function makeGlowSprite(type, radius, alpha) {
+      const glowR = type === "goldfire" ? radius * 4.2 : radius * 4;
+      const size = Math.ceil(glowR * 2 + 2);
+      const off = document.createElement("canvas");
+      off.width = size;
+      off.height = size;
+      const g = off.getContext("2d");
+      const cx = size / 2;
+      const grad = g.createRadialGradient(cx, cx, 0, cx, cx, glowR);
+      if (type === "goldfire") {
+        grad.addColorStop(0, `rgba(212, 175, 55, ${alpha})`);
+        grad.addColorStop(0.5, `rgba(201, 42, 42, ${alpha * 0.35})`);
+        grad.addColorStop(1, "rgba(10, 10, 10, 0)");
+      } else {
+        grad.addColorStop(0, `rgba(140, 210, 255, ${alpha * 0.85})`);
+        grad.addColorStop(0.5, `rgba(80, 130, 210, ${alpha * 0.3})`);
+        grad.addColorStop(1, "rgba(10, 10, 10, 0)");
+      }
+      g.fillStyle = grad;
+      g.beginPath();
+      g.arc(cx, cx, glowR, 0, Math.PI * 2);
+      g.fill();
+      return off;
+    }
+
     for (let i = 0; i < count; i++) {
       const mod = i % 3;
       const type = mod === 0 ? "petal" : mod === 1 ? "goldfire" : "soulfire";
+      const radius = type === "petal" ? 3 + Math.random() * 3.5 : 2 + Math.random() * 4;
+      const alpha = 0.25 + Math.random() * 0.48;
       particles.push({
         type,
         x: Math.random() * width,
         y: Math.random() * height,
-        r: type === "petal" ? 3 + Math.random() * 3.5 : 2 + Math.random() * 4,
+        r: radius,
         vx: (Math.random() - 0.5) * 0.38,
         vy: type === "petal" ? 0.32 + Math.random() * 0.5 : -(0.18 + Math.random() * 0.42),
         angle: Math.random() * Math.PI * 2,
         spin: (Math.random() - 0.5) * 0.02,
-        alpha: 0.25 + Math.random() * 0.48
+        alpha,
+        sprite: type === "petal" ? null : makeGlowSprite(type, radius, alpha)
       });
     }
 
+    let loopOn = false;
+
     function animate() {
+      if (document.hidden) {
+        loopOn = false;
+        return;
+      }
+      loopOn = true;
       ctx.clearRect(0, 0, width, height);
 
       for (const p of particles) {
@@ -1653,38 +1797,26 @@
         if (p.x < -20) p.x = width + 20;
         if (p.x > width + 20) p.x = -20;
 
-        ctx.save();
-        if (p.type === "goldfire") {
-          const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4.2);
-          glow.addColorStop(0, `rgba(212, 175, 55, ${p.alpha})`);
-          glow.addColorStop(0.5, `rgba(201, 42, 42, ${p.alpha * 0.35})`);
-          glow.addColorStop(1, "rgba(10, 10, 10, 0)");
-          ctx.fillStyle = glow;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * 4.2, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (p.type === "soulfire") {
-          const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-          glow.addColorStop(0, `rgba(140, 210, 255, ${p.alpha * 0.85})`);
-          glow.addColorStop(0.5, `rgba(80, 130, 210, ${p.alpha * 0.3})`);
-          glow.addColorStop(1, "rgba(10, 10, 10, 0)");
-          ctx.fillStyle = glow;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
-          ctx.fill();
+        if (p.sprite) {
+          ctx.drawImage(p.sprite, p.x - p.sprite.width / 2, p.y - p.sprite.height / 2);
         } else {
+          ctx.save();
           ctx.translate(p.x, p.y);
           ctx.rotate(p.angle);
           ctx.fillStyle = `rgba(201, 24, 42, ${p.alpha * 0.9})`;
           ctx.beginPath();
           ctx.ellipse(0, 0, p.r * 1.45, p.r * 0.52, 0, 0, Math.PI * 2);
           ctx.fill();
+          ctx.restore();
         }
-        ctx.restore();
       }
 
       requestAnimationFrame(animate);
     }
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && !loopOn) animate();
+    });
 
     animate();
   }
@@ -1757,8 +1889,10 @@
     });
   }
 
-  // デバッグ確認用ショートカット（[Debug: True] / [Debug: Normal] / [Debug: Bad]）
+  // デバッグ確認用ショートカット（?debug=1 のときだけ表示）
   if (dom.debugEndingBar) {
+    dom.debugEndingBar.classList.toggle("hidden", !debugEnabled);
+    dom.debugEndingBar.setAttribute("aria-hidden", debugEnabled ? "false" : "true");
     dom.debugEndingBar.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-debug-ending]");
       if (!btn) return;
@@ -1769,7 +1903,43 @@
     });
   }
 
+  // PC版 / スマホ版の切替リンク。debug 指定中はそのフラグを引きつぐ
+  document.querySelectorAll("[data-switch-view]").forEach((link) => {
+    const target = link.getAttribute("data-switch-view");
+    if (target === "mobile") {
+      link.href = debugEnabled ? "mobile.html?debug=1" : "mobile.html";
+    } else if (target === "pc") {
+      const q = new URLSearchParams();
+      q.set("view", "pc");
+      if (debugEnabled) q.set("debug", "1");
+      link.href = `index.html?${q.toString()}`;
+    }
+  });
+
+  // 画像の成功・失敗は再描画で増える inline 属性ではなく、ここで一度だけ受ける
+  document.addEventListener(
+    "load",
+    (event) => {
+      const target = event.target;
+      if (target && target.tagName === "IMG" && target.classList.contains("card-real-img")) {
+        target.parentElement?.classList.add("has-loaded-img");
+      }
+    },
+    true
+  );
+  document.addEventListener(
+    "error",
+    (event) => {
+      const target = event.target;
+      if (!target || target.tagName !== "IMG" || !target.classList.contains("card-real-img")) return;
+      const src = target.getAttribute("src");
+      if (src) failedImageSrcs.add(src);
+      target.remove();
+    },
+    true
+  );
+
   initBackgroundParticles();
   tryStartBgm(BGM_VOLUME_TITLE);
-  initGame();
+  // 本編の山札・画像読み込みは「帳場を開く」まで遅らせる（タイトル裏での二重初期化を避ける）
 })();
